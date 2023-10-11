@@ -1,5 +1,38 @@
+author: "Lucas"
 title: "Lucas Mendelowski"
+description: "I thrive on new challenges and eagerly embrace every opportunity to learn."
 url: "https://mendelowski.com"
+
+github: "https://github.com/lcmen"
+linkedin: "https://www.linkedin.com/in/lucasmendelowski/"
+twitter: "https://twitter.com/lcmen_"
+
+autopages:
+  enabled: false
+
+collections:
+  notes:
+    output: true
+    permalink: /til/:name
+
+markdown: kramdown
+highlighter: rouge
+input: GFM
+
+pagination:
+  enabled: true
+  per_page: 5
+  sort_field: 'date'
+  sort_reverse: true
+  trail:
+    before: 3
+    after: 3
+
+reading_time:
+  second_plural: "sec"    # default: seconds
+  minute_singular: "min"  # default: minute
+  minute_plural: "min"
 
 plugins:
   - jekyll-postcss-v2
+  - jekyll-paginate-v2

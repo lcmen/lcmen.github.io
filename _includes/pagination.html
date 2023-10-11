@@ -1,0 +1,39 @@
+{% if paginator.total_pages > 1 %}
+  <div class="flex pt-8 lg:pt-16 gap-3">
+    {% if paginator.previous_page %}
+    <a
+      href="{{ paginator.previous_page_path | prepend: site.baseurl }}"
+      class="group flex cursor-pointer items-center border-2 border-primary px-3 py-1 font-body font-medium text-primary transition-colors hover:border-secondary hover:text-secondary"
+      >
+        Prev
+        <i class="bx bx-left-arrow-alt ml-1 text-primary transition-colors group-hover:text-secondary"></i>
+      </a>
+    {% endif %}
+
+    {% if paginator.page_trail %}
+      {% for trail in paginator.page_trail %}
+        {% if page.url == trail.path %}
+          <span
+            class="cursor-pointer border-2 border-secondary px-3 py-1 font-body font-medium text-secondary"
+          >{{ trail.num }}</span>
+        {% else %}
+          <a
+            href="{{ trail.path | prepend: site.baseurl | replace: 'index.html', ''}}"
+            class="cursor-pointer border-2 border-primary px-3 py-1 font-body font-medium text-primary
+            transition-colors hover:border-secondary hover:text-secondary"
+          >{{ trail.num }}</a>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    {% if paginator.next_page %}
+    <a
+      href="{{ paginator.next_page_path | prepend: site.baseurl }}"
+      class="group flex cursor-pointer items-center border-2 border-primary px-3 py-1 font-body font-medium text-primary transition-colors hover:border-secondary hover:text-secondary"
+      >
+        Next
+        <i class="bx bx-right-arrow-alt ml-1 text-primary transition-colors group-hover:text-secondary"></i>
+      </a>
+    {% endif %}
+  </div>
+{% endif %}

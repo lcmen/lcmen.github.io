@@ -1,0 +1,16 @@
+<div class="{% if first == false %}border-t border-grey-lighter pt-8{% endif %}">
+  <h2 class="block font-body text-3xl font-semibold leading-tight text-primary transition-colors">
+    {{ note.title }}
+  </h2>
+  <div class="py-4 flex items-center gap-2">
+    {% for tag in note.tags %}
+      {% include tag.html tag=tag %}
+    {% endfor %}
+    <p class="pr-2 font-body font-light text-primary">
+      {{ note.date | date: "%B %d, %Y" }}
+    </p>
+  </div>
+  <article class="prose prose max-w-none">
+    {{ note.content }}
+  </article>
+</div>

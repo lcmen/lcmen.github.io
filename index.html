@@ -1,0 +1,74 @@
+---
+layout: default
+title: "Intro"
+---
+
+<div class="border-b border-grey-lighter py-16 lg:py-20">
+  <div>
+    <img src="{{ "/assets/images/author.png" | relative_url }}" class="h-16 w-16" alt="author" />
+  </div>
+  <h1
+    class="pt-3 font-body text-4xl font-semibold text-primary dark:text-white md:text-5xl lg:text-6xl"
+    >
+    Hi, I’m {{ site.author }}
+  </h1>
+  <p class="pt-3 font-body text-xl font-light text-primary">
+    {{ site.description }}
+  </p>
+  <a href="/contact"
+    class="mt-12 block bg-secondary px-10 py-4 text-center font-body text-xl font-semibold text-white transition-colors hover:bg-green sm:inline-block sm:text-left sm:text-2xl"
+  >
+    Say Hello!
+  </a>
+</div>
+
+<div class="border-b border-grey-lighter py-16 lg:py-20">
+  <div class="flex items-center pb-6">
+    <img src="{{ "/assets/images/icon-story.png" | relative_url }}" alt="icon story" />
+    <h3
+      class="ml-3 font-body text-2xl font-semibold text-primary dark:text-white"
+      >
+      My Story
+    </h3>
+  </div>
+  <div>
+    <p class="font-body font-light text-primary">
+      I am a detail-oriented software engineer with a diverse background,
+      having worked with companies worldwide, from start-ups to medium-sized organizations.
+      <br />
+      <br />
+      I thrive on new challenges and eagerly embrace every opportunity to learn,
+      whether it involves tackling a fresh project, mastering new tools, or assuming a different role.
+      <br />
+      <br />
+      Currently, I leverage the power of Ruby, Rails, and React to deliver exceptional results.
+      Moreover, I am actively expanding my skill set by delving into the realms of Elixir and Go.
+    </p>
+  </div>
+</div>
+
+<div class="py-16 lg:py-20">
+  <div class="flex items-center pb-6">
+    <img src="{{ "/assets/images/icon-post.png" | relative_url }}" alt="icon story" />
+    <h3 class="ml-3 font-body text-2xl font-semibold text-primary dark:text-white">
+      Latest Posts
+    </h3>
+    <a
+      href="/blog"
+      class="flex items-center pl-10 font-body italic text-green transition-colors hover:text-secondary dark:text-green-light dark:hover:text-secondary"
+      >
+      All posts
+      <img
+        src="{{ "/assets/images/long-arrow-right.png" | relative_url }}"
+        class="ml-3"
+        alt="arrow right"
+        />
+    </a>
+  </div>
+  <div class="pt-8">
+    {% for post in site.posts limit:3 %}
+      {% assign first = forloop.first %}
+      {% include post.html post=post first=first %}
+    {% endfor %}
+  </div>
+</div>
