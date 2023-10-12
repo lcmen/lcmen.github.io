@@ -39,6 +39,10 @@ module.exports = {
       "grey-lightest": "#eff0f3",
       "grey-lighter": "#eceef1",
       "grey-light": "#ccd7e0",
+      red: "#dc2626",
+      "red-light": "#fca5a5",
+      sky: "#0284c7",
+      "sky-light": "#bae6fd",
     },
 
     border: {

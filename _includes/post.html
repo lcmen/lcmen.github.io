@@ -1,7 +1,9 @@
 <div class="{% if first == false %}border-t border-grey-lighter mt-8 pt-8 {% endif %}">
-  {% for tag in post.tags %}
-    {% include tag.html tag=tag %}
-  {% endfor %}
+  <p class="mb-4">
+    {% for tag in post.tags %}
+      {% include tag.html tag=tag %}
+    {% endfor %}
+  </p>
   <a
     href="{{ post.url }}"
     class="block font-body text-lg font-semibold text-primary transition-colors hover:text-green"

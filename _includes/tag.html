@@ -1,3 +1,18 @@
-<span class="mb-4 inline-block rounded-full bg-green-light px-2 py-1 font-body text-sm text-green">
-  {{ tag }}
-</span>
+{% assign color = site.data.tags[tag] %}
+{% if color == 'blue' %}
+  <span class="inline-block rounded-full bg-blue-light px-2 py-1 font-body text-sm text-blue">
+    {{ tag }}
+  </span>
+{% elsif color == 'sky' %}
+  <span class="inline-block rounded-full bg-sky-light px-2 py-1 font-body text-sm text-sky">
+    {{ tag }}
+  </span>
+{% elsif color == 'red' %}
+  <span class="inline-block rounded-full bg-red-light px-2 py-1 font-body text-sm text-red">
+    {{ tag }}
+  </span>
+{% else %}
+  <span class="inline-block rounded-full bg-green-light px-2 py-1 font-body text-sm text-green">
+    {{ tag }}
+  </span>
+{% endif %}

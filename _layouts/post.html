@@ -2,9 +2,11 @@
 layout: default
 ---
 <div class="border-b border-grey-lighter pb-8 sm:pb-12">
-  {% for tag in page.tags %}
-    {% include tag.html tag=tag %}
-  {% endfor %}
+  <p class="mb-4">
+    {% for tag in page.tags %}
+      {% include tag.html tag=tag %}
+    {% endfor %}
+  </p>
   <h2 class="block font-body text-3xl font-semibold leading-tight text-primary transition-colors">
     {{ page.title }}
   </h2>
@@ -14,7 +16,7 @@ layout: default
     </p>
     <span class="font-body text-grey dark:text-white">//</span>
     <p class="pl-2 font-body font-light text-primary">
-      {{ post.content | reading_time }} read
+      {{ content | reading_time }} read
     </p>
   </div>
 </div>
