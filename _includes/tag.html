@@ -1,18 +1,18 @@
 {% assign color = site.data.tags[tag] %}
-{% if color == 'blue' %}
-  <span class="inline-block rounded-full bg-blue-light px-2 py-1 font-body text-sm text-blue">
+{% if color == 'cyan' %}
+  <span class="inline-block rounded-full bg-tag-cyan-accent px-2 py-1 font-body text-sm text-tag-cyan">
     {{ tag }}
   </span>
 {% elsif color == 'sky' %}
-  <span class="inline-block rounded-full bg-sky-light px-2 py-1 font-body text-sm text-sky">
+  <span class="inline-block rounded-full bg-tag-sky-accent px-2 py-1 font-body text-sm text-tag-sky">
     {{ tag }}
   </span>
 {% elsif color == 'red' %}
-  <span class="inline-block rounded-full bg-red-light px-2 py-1 font-body text-sm text-red">
+  <span class="inline-block rounded-full bg-tag-red-accent px-2 py-1 font-body text-sm text-tag-red">
     {{ tag }}
   </span>
 {% else %}
-  <span class="inline-block rounded-full bg-green-light px-2 py-1 font-body text-sm text-green">
+  <span class="inline-block rounded-full bg-tag-gray-accent px-2 py-1 font-body text-sm text-tag-gray">
     {{ tag }}
   </span>
 {% endif %}
