@@ -15,6 +15,12 @@ collections:
     output: true
     permalink: /til/:name
 
+exclude:
+  - package.json
+  - package-lock.json
+  - postcss.config.js
+  - tailwind.config.js
+
 markdown: kramdown
 highlighter: rouge
 input: GFM
