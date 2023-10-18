@@ -40,10 +40,15 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('turbo:before-render', function(event) {
   if (!document.startViewTransition) return;
 
-  event.preventDefault();
-  document.startViewTransition(function() {
-    event.detail.resume();
-  });
+  const render = event.detail.render;
+
+  event.detail.render = (current, upcoming) => {
+    const transition = document.startViewTransition(function() {
+      render(current, upcoming);
+    });
+
+    return transition.updateCallbackDone;
+  }
 });
 
 document.addEventListener('turbo:render', function() {
