@@ -7,29 +7,23 @@ title: "Intro"
   <div>
     <img src="{{ "/assets/img/author.png" | relative_url }}" class="h-16 w-16" alt="author" />
   </div>
-  <h1
-    class="pt-3 font-body text-4xl font-semibold text-primary dark:text-white md:text-5xl lg:text-6xl"
-    >
+  <h1 class="pt-3 font-body text-4xl font-semibold text-primary md:text-5xl lg:text-6xl">
     Hi, I’m {{ site.author }}
   </h1>
   <p class="pt-3 font-body text-xl font-light text-primary">
-    {{ site.description }}
+    I thrive on new challenges and eagerly embrace every opportunity to learn.
   </p>
-  <a href="/contact"
+  <a
+    href="/contact"
     class="mt-12 block bg-secondary px-10 py-4 text-center font-body text-xl font-semibold text-white transition-colors hover:bg-green sm:inline-block sm:text-left sm:text-2xl"
-  >
-    Say Hello!
-  </a>
+    aria-label="Contact me"
+  >Say Hello!</a>
 </div>
 
 <div class="border-b border-grey-lighter py-16 lg:py-20">
   <div class="flex items-center pb-6">
-    <img src="{{ "/assets/img/icon-story.png" | relative_url }}" alt="icon story" />
-    <h3
-      class="ml-3 font-body text-2xl font-semibold text-primary dark:text-white"
-      >
-      My Story
-    </h3>
+    <img src="{{ "/assets/img/icon-story.png" | relative_url }}" width="21" height="29" alt="icon story" />
+    <h2 class="ml-3 font-body text-2xl font-semibold text-primary">My Story</h2>
   </div>
   <div>
     <p class="font-body font-light text-primary">
@@ -49,20 +43,15 @@ title: "Intro"
 
 <div class="py-16 lg:py-20">
   <div class="flex items-center pb-6">
-    <img src="{{ "/assets/img/icon-post.png" | relative_url }}" alt="icon story" />
-    <h3 class="ml-3 font-body text-2xl font-semibold text-primary dark:text-white">
-      Latest Posts
-    </h3>
+    <img src="{{ "/assets/img/icon-post.png" | relative_url }}" width="32" height="21" alt="icon story" />
+    <h2 class="ml-3 font-body text-2xl font-semibold text-primary">Latest Posts</h2>
     <a
       href="/blog"
-      class="flex items-center pl-10 font-body italic text-green transition-colors hover:text-secondary dark:text-green-light dark:hover:text-secondary"
-      >
+      class="flex items-center pl-10 font-body italic text-green transition-colors hover:text-secondary"
+      aria-label="All posts"
+    >
       All posts
-      <img
-        src="{{ "/assets/img/long-arrow-right.png" | relative_url }}"
-        class="ml-3"
-        alt="arrow right"
-        />
+      <img src="{{ "/assets/img/long-arrow-right.png" | relative_url }}" width="16" height="10" class="ml-3" alt="arrow right" />
     </a>
   </div>
   <div class="pt-8">

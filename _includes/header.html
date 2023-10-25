@@ -1,12 +1,12 @@
 <header id="header" class="container mx-auto" data-turbo-permanent>
   <div class="flex items-center justify-between py-6 lg:py-10">
-    <a href="/" class="flex items-center">
-      <span href="/" class="mr-2">
+    <a href="/" class="flex items-center" aria-label="Homepage">
+      <span class="mr-2">
         <img src="{{ "/assets/img/logo.svg" | relative_url }}" width="44" height="36" alt="logo" class="mr-2"  />
       </span>
     </a>
     <div class="flex items-center lg:hidden">
-      <button id="menu" class="group z-50">
+      <button id="menu" class="group z-50" aria-label="Mobile menu">
         <svg
           width="24"
           height="15"
@@ -24,23 +24,43 @@
         <div class="ml-auto w-2/3 bg-green p-4 md:w-1/3">
           <ul class="mt-8 flex flex-col">
             <li>
-              <a href="/" class="mb-3 block px-2 font-body text-lg font-medium text-white">Intro</a>
+              <a
+                href="/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Intro"
+              >Intro</a>
             </li>
 
             <li>
-              <a href="/blog/" class="mb-3 block px-2 font-body text-lg font-medium text-white">Blog</a>
+              <a
+                href="/blog/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Blog"
+              >Blog</a>
             </li>
 
             <li>
-              <a href="/til/" class="mb-3 block px-2 font-body text-lg font-medium text-white">Til</a>
+              <a
+                href="/til/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Today I Learned"
+              >Til</a>
             </li>
 
             <li>
-              <a href="/uses/" class="mb-3 block px-2 font-body text-lg font-medium text-white">Uses</a>
+              <a
+                href="/uses/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Uses"
+              >Uses</a>
             </li>
 
             <li>
-              <a href="/contact/" class="mb-3 block px-2 font-body text-lg font-medium text-white">Contact</a>
+              <a
+                href="/contact/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Contact"
+              >Contact</a>
             </li>
           </ul>
         </div>
@@ -54,8 +74,8 @@
           <a
             href="/"
             class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
-            >Intro</a
-          >
+            aria-label="Intro"
+          >Intro</a>
         </li>
 
         <li class="group relative mr-6 mb-1">
@@ -64,8 +84,8 @@
           <a
             href="/blog/"
             class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
-            >Blog</a
-          >
+            aria-label="Blog"
+          >Blog</a>
         </li>
 
         <li class="group relative mr-6 mb-1">
@@ -74,8 +94,8 @@
           <a
             href="/til/"
             class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
-            >Til</a
-          >
+            aria-label="Today I Learned"
+          >Til</a>
         </li>
 
         <li class="group relative mr-6 mb-1">
@@ -84,9 +104,8 @@
           <a
             href="/uses/"
             class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
-          >
-            Uses
-          </a>
+            aria-label="Uses"
+          >Uses</a>
         </li>
 
         <li class="group relative mr-6 mb-1">
@@ -95,9 +114,8 @@
           <a
             href="/contact/"
             class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
-          >
-            Contact
-          </a>
+            aria-label="Contact"
+          >Contact</a>
         </li>
       </ul>
     </div>

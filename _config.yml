@@ -1,11 +1,8 @@
 author: "Lucas"
 title: "Lucas Mendelowski"
-description: "I thrive on new challenges and eagerly embrace every opportunity to learn."
+description: "I'm Lucas, an experienced software engineer focused on building web applications."
 url: "https://mendelowski.com"
-
-github: "https://github.com/lcmen"
-linkedin: "https://www.linkedin.com/in/lucasmendelowski/"
-twitter: "https://twitter.com/lcmen_"
+twitter: "lcmen_"
 
 autopages:
   enabled: false

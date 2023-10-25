@@ -7,14 +7,13 @@
   <a
     href="{{ post.url }}"
     class="block font-body text-lg font-semibold text-primary transition-colors hover:text-green"
-  >
-    {{ post.title }}
-  </a>
+    aria-label="{{ post.title }}"
+  >{{ post.title }}</a>
   <div class="flex items-center pt-4">
     <p class="pr-2 font-body font-light text-primary">
       {{ post.date | date: "%B %d, %Y" }}
     </p>
-    <span class="font-body text-grey dark:text-white">//</span>
+    <span class="font-body text-grey">//</span>
     <p class="pl-2 font-body font-light text-primary">
       {{ post.content | reading_time }} read
     </p>

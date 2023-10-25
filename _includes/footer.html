@@ -4,17 +4,11 @@
       &copy; {{ site.time | date: "%Y" }} {{ site.title }}
     </p>
     <div class="flex items-center pt-5 gap-5 sm:pt-0">
-      <a href="{{ site.linkedin }}" target="_blank">
-        <i class="text-4xl text-primary hover:text-secondary transition-colors bx bxl-linkedin"></i>
-      </a>
-
-      <a href="{{ site.github }}" target="_blank">
-        <i class="text-4xl text-primary hover:text-secondary transition-colors bx bxl-github"></i>
-      </a>
-
-      <a href="{{ site.twitter }}" target="_blank">
-        <i class="text-4xl text-primary hover:text-secondary transition-colors bx bxl-twitter"></i>
-      </a>
+      {% for social in site.data.social %}
+        <a href="{{ social[1] }}" target="_blank" aria-label="{{ social[0] }}">
+          <i class="text-4xl text-primary hover:text-secondary transition-colors bx bxl-{{ social[0] }}"></i>
+        </a>
+      {% endfor %}
     </div>
   </div>
 </footer>
