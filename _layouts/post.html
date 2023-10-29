@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-<div class="border-b border-grey-lighter pb-8 sm:pb-12">
+<div>
   <p class="mb-4">
     {% for tag in page.tags %}
       {% include tag.html tag=tag %}
@@ -10,16 +10,16 @@ layout: default
   <h2 class="block font-body text-3xl font-semibold leading-tight text-primary transition-colors">
     {{ page.title }}
   </h2>
-  <div class="flex items-center pt-4">
-    <p class="pr-2 font-body font-light text-primary">
+  <div class="flex items-center gap-2 py-4 font-body text-grey">
+    <p class="font-light">
       {{ page.date | date: "%B %d, %Y" }}
     </p>
-    <span class="font-body text-grey">//</span>
-    <p class="pl-2 font-body font-light text-primary">
+    <span>//</span>
+    <p class="font-light">
       {{ content | reading_time }} read
     </p>
   </div>
+  <article class="prose prose max-w-none">
+    {{ content }}
+  </article>
 </div>
-<article class="prose prose max-w-none border-b border-grey-lighter py-8 sm:py-12">
-  {{ content }}
-</article>
