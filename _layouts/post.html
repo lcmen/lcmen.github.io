@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-<div>
+<article class="mb-8">
   <p class="mb-4">
     {% for tag in page.tags %}
       {% include tag.html tag=tag %}
@@ -19,7 +19,7 @@ layout: default
       {{ content | reading_time }} read
     </p>
   </div>
-  <article class="prose prose max-w-none">
+  <content class="prose prose max-w-none">
     {{ content }}
-  </article>
-</div>
+  </content >
+</article>

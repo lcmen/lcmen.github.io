@@ -1,22 +1,23 @@
 ---
 layout: post
 title: "Pattern matching with Ruby"
+description: "Pattern matching introduced in Ruby 2.7, allows for destructering data to make code more elegant."
 date: 2023-09-28
 tags:
   - ruby
 ---
 
-With version 2.7, Ruby introduced a pattern matching, the feature that simplifies matching and destructuring data to make the code more concise, readable, and robust.
+With version 2.7, Ruby introduced a pattern matching. The feature that simplifies matching and destructuring data to make the code more concise and readable.
 
-Pattern matching, a concept borrowed from functional programming languages, enables developers to match values based on their structure and extract elements with ease. This powerful addition to the Ruby toolkit opens up new avenues for expressing complex logic in a more natural and elegant way. Whether you're a seasoned Ruby developer or just getting started, understanding and mastering pattern matching is essential for writing clean, maintainable, and efficient code.
-So, whether you're looking to level up your Ruby skills or just curious about what pattern matching has to offer, let's dive in and unlock the power of pattern matching in Ruby 2.7.
+Pattern matching is a concept borrowed from functional programming. It enables developers to match values based on their structure and extract elements at the same time. This powerful addition to the Ruby toolkit opens up new avenues for expressing complex logic in a more natural and elegant way.
 
-Your code will thank you!
+In this article we will dive in and unlock the power of pattern matching to make your code easier to understand.
+
+Your colleagues will thank you!
 
 ## Matching against array or hashes
 
 In Ruby, pattern matching can be done using the `in` or `=>` (only available in Ruby >= 3) operators. Below are a couple of examples illustrating the power of this approach:
-
 ### Matching with `case` and `in`
 
 ```ruby
@@ -32,7 +33,7 @@ p error
 end
 ```
 
-In this example, we use a `case` statement with the `in` operator to match different patterns within the returned hash from `api.get` method. Depending on the `success` field, we can extract different values.
+In this example, we use a `case` statement with the `in` operator to match different patterns within the returned hash from `api.get` method. Depending on the `success` field, we extract different values from the result.
 
 ### Matching with `=>` (available only in Ruby 3.0 and above):
 
@@ -42,11 +43,11 @@ result => { success: }
 success # true
 ```
 
-In this example, we create a hash called `result` and use the `=>` operator to match it against the hash with `success` key, and extracting value under that key.
+If we only need to extract some value from the data structure, we can use `=>` operator to avoid lengthy and verbose `case` / `in` construction.
 
 ## Matching multiple patterns
 
-You can match against multiple patterns within a single block by using the `|` operator:
+You can also match against multiple patterns within a single block by using the `|` operator:
 
 ```ruby
 # assuming api.get might return hashes in one of the following schemas:
@@ -64,7 +65,7 @@ end
 
 ## Assigning matched values to variables
 
-To assign the matched value from `case` / `in` construct to a variable, you can use the `=>` operator:
+To assign the matched value from `case` / `in` construct to a variable, combine it with the `=>` operator:
 
 ```ruby
 case api.get('user', 1)
@@ -73,11 +74,11 @@ in { success: true|false, data: Object } => response
 end
 ```
 
-This allows you to work with the matched value conveniently by exposing it under variable with the specified name (`response` in this case).
+This allows you to work with the matched value conveniently by exposing the whole data under variable with the provided name (`response` in this case).
 
 ## Matching the same value across patterns
 
-Use the `^` (pin operator) to match the same value across different fields:
+Use the `^` (pin operator) to match the same value across different points of reference:
 
 ```ruby
 case [api.count('user', 'active'), api.count('user', 'invited')]
@@ -103,7 +104,7 @@ end
 
 ## Matching against classes
 
-In Ruby, pattern matching isn't limited to arrays and hashes. You can also utilize it with custom classes. To make a class available for pattern matching operators, you need to implement two methods:
+In Ruby, pattern matching isn't limited to arrays and hashes. You can also utilize it with your own classes. To make a class available for pattern matching operators, you need to implement two methods:
 
 - `deconstruct` for array-style matching
 - `deconstruct_key` for hash-style matching
