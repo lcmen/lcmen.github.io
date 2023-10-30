@@ -1,19 +1,27 @@
 <!DOCTYPE html>
 <html lang="{{ site.lang | default: "en-US" }}">
   <head>
+    <title>{{ page.title }} - {{ site.title }}</title>
+
     <meta charset="utf-8" />
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
-    <title>{{ page.title }} - {{ site.title }}</title>
     <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}" />
+    <meta name="turbo-cache-control">
+
+    <meta property="og:title" content="{{ page.title }} - {{ site.title }}" />
+    <meta property="og:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}" />
     <meta property="og:image" content="{{ site.url }}/assets/img/social.jpg" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:title" content="{{ page.title }} - {{ site.title }}" />
     <meta property="og:url" content="{{ site.url }}" />
     <meta property="og:site_name" content="{{ site.title }}" />
+
+    <meta name="twitter:title" content="{{ page.title }} - {{ site.title }}" />
+    <meta name="twitter:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="{{ site.twitter }}" />
     <meta name="twitter:site" content="{{ site.twitter }}" />
-    <meta name="turbo-cache-control">
+
     <link rel="canonical" href="{{ site.url }}/{{ page.path }}" />
     <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
     <link crossorigin="crossorigin" href="https://fonts.gstatic.com" rel="preconnect" />
