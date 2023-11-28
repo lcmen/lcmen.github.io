@@ -1,7 +1,6 @@
 ---
 layout: default
 title: "Fingerprinted URL to Ruby on Rails asset files"
-description: "Get relative or absolute URL to fingerprinted asset file in Ruby on Rails."
 date: 2023-10-09
 tags:
     - ruby

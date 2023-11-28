@@ -1,7 +1,6 @@
 ---
 layout: default
 title: "Run gofmt on all files"
-description: "Format all go files recursively."
 date: 2019-01-07
 tags:
   - golang
