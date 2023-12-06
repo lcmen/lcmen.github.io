@@ -134,8 +134,14 @@ module.exports = {
               },
             },
             pre: {
+              marginTop: 0,
+              marginBottom: `${theme("spacing.5")}`,
               backgroundColor: "#fcfcfc",
               color: "inherit",
+            },
+            h3: {
+              marginTop: 0,
+              marginBottom: `${theme("spacing.5")}`,
             }
           },
         },
