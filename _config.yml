@@ -10,7 +10,11 @@ autopages:
 collections:
   notes:
     output: true
-    permalink: /til/:name
+    permalink: /til/:year/:month/:title
+  posts:
+    output: true
+    permalink: /blog/:year/:month/:title
+
 
 exclude:
   - package.json

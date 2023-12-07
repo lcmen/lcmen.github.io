@@ -17,9 +17,8 @@ layout: default
   </div>
 
   <div class="pt-8 lg:pt-12">
-    {% for note in paginator.posts %}
-      {% assign first = forloop.first %}
-      {% include note.html note=note first=first %}
+    {% for post in paginator.posts %}
+      {% include post.html post=post first=forloop.first %}
     {% endfor %}
   </div>
 

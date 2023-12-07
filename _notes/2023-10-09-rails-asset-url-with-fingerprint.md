@@ -1,6 +1,7 @@
 ---
-layout: default
-title: "Fingerprinted URL to Ruby on Rails asset files"
+layout: post
+title: "Ruby on Rails asset URL with fingerprint"
+description: "Get URL to Ruby on Rails application asset files including their fingerprint"
 date: 2023-10-09
 tags:
     - ruby

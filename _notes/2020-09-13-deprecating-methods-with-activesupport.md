@@ -1,6 +1,7 @@
 ---
-layout: default
-title: Deprecating methods with ActiveSupport
+layout: post
+title: "Deprecating methods with ActiveSupport"
+description: "Add deprecation warning with custom message using ActiveSupport"
 date: 2020-09-13
 tags:
     - ruby

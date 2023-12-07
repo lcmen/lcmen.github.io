@@ -1,6 +1,7 @@
 ---
-layout: default
-title: HSTS with Rails
+layout: post
+title: "HSTS with Rails"
+description: "Enforce requests over HTTPS with Ruby on Rails"
 date: 2019-08-26
 tags:
   - ruby

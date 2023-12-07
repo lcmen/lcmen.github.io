@@ -22,3 +22,7 @@ html {
     max-width: 850px;
   }
 }
+
+.turbo-progress-bar {
+  @apply bg-secondary;
+}

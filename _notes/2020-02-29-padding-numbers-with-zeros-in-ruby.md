@@ -1,6 +1,7 @@
 ---
-layout: default
-title: Padding numbers with zeros in Ruby
+layout: post
+title: "Padding numbers with zeros in Ruby"
+description: "Pad numbers with zeros in front or back of the number"
 date: 2020-02-29
 tags:
     - ruby

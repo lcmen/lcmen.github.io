@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: post
 title: "Show Rake task details"
+description: "Display Rake task details with Ruby"
 date: 2023-11-28
 tags:
     - ruby
