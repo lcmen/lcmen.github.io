@@ -46,33 +46,32 @@ title: "Intro"
     <img src="{{ "/assets/img/icon-post.png" | relative_url }}" width="32" height="21" alt="icon story" />
     <h2 class="ml-3 font-body text-2xl font-semibold text-primary">Latest Content</h2>
   </div>
-  <div class="pt-8">
-    <div class="flex">
-      <div class="w-1/2">
-        {% for post in site.posts limit:1 %}
-          {% include post.html post=post first=true time=true %}
-          <a
-            href="/blog/"
-            class="mt-3 flex items-center font-body italic text-green transition-colors hover:text-secondary"
-            aria-label="All posts"
-          >
-            All posts
-            <img src="{{ "/assets/img/long-arrow-right.png" | relative_url }}" width="16" height="10" class="ml-3" alt="arrow right" />
-          </a>
-        {% endfor %}
-      </div>
-      <div class="w-1/2">
-        {% for post in site.notes limit:1 %}
-          {% include post.html post=post first=true %}
-          <a
-            href="/til/"
-            class="mt-3 flex items-center font-body italic text-green transition-colors hover:text-secondary"
-            aria-label="All notes"
-          >
-            All notes
-            <img src="{{ "/assets/img/long-arrow-right.png" | relative_url }}" width="16" height="10" class="ml-3" alt="arrow right" />
-          </a>
-        {% endfor %}
-      </div>
+  <div class="lg:flex">
+    <div class="lg:w-1/2 lg:mb-0 mb-6">
+      {% for post in site.posts limit:1 %}
+        {% include post.html post=post first=true time=true %}
+        <a
+          href="/blog/"
+          class="mt-3 flex items-center font-body italic text-green transition-colors hover:text-secondary"
+          aria-label="All posts"
+        >
+          All posts
+          <img src="{{ "/assets/img/long-arrow-right.png" | relative_url }}" width="16" height="10" class="ml-3" alt="arrow right" />
+        </a>
+      {% endfor %}
+    </div>
+    <div class="lg:w-1/2">
+      {% for post in site.notes limit:1 %}
+        {% include post.html post=post first=true %}
+        <a
+          href="/til/"
+          class="mt-3 flex items-center font-body italic text-green transition-colors hover:text-secondary"
+          aria-label="All notes"
+        >
+          All notes
+          <img src="{{ "/assets/img/long-arrow-right.png" | relative_url }}" width="16" height="10" class="ml-3" alt="arrow right" />
+        </a>
+      {% endfor %}
+    </div>
   </div>
 </div>
