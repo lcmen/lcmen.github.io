@@ -37,7 +37,7 @@ In this article, we will explore the cache key versioning feature in Ruby on Rai
 
 ## Key versioning
 
-All the little caching helpers presented above rely on [ActiveRecord::Base.cache_key](https://api.rubyonrails.org/classes/ActiveRecord/Integration.html#method-i-cache_key) assisted by [ActiveRecord::Base.cache_version](https://api.rubyonrails.org/classes/ActiveRecord/Integration.html#method-i-cache_version):
+All the little caching helpers presented above rely on [ActiveRecord::Base.cache_key](https://api.rubyonrails.org/classes/ActiveRecord/Integration.html#method-i-cache_key) and [ActiveRecord::Base.cache_version](https://api.rubyonrails.org/classes/ActiveRecord/Integration.html#method-i-cache_version) methods:
 
 ```ruby
 >> User.first.cache_key
@@ -67,9 +67,9 @@ In the above example, note that the version of model, which defaults to the last
 => "10-20231219181041677933"
 ```
 
-This behavior allows for key reuse and is controlled by the config.active_record.cache_versioning and config.active_record.collection_cache_versioning options (both default to true for Rails >= 6.0).
+This behavior allows for key reuse and is controlled by the `config.active_record.cache_versioning` and `config.active_record.collection_cache_versioning` options (both default to true for Rails >= 6.0).
 
-Individualized cache versioning settings can be configured on a model level:
+Cache versioning setting can be customized on the individual model as well:
 
 ```ruby
 class User < ApplicationRecord
