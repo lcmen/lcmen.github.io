@@ -97,8 +97,6 @@ Prior to Rails 6, where the cache versioning feature was not available, every ti
 
 With cache versioning disabled, the following code will keep three cache entries for the same object in a cache store:
 
-*The examples above assume Redis is used as a cache store*
-
 ```ruby
 # Rails.fetch(user.cache_key) is equivalent of Rails.fetch(user) with cache versioning disabled
 Rails.fetch(user.cache_key) do
@@ -116,6 +114,8 @@ end
 # Check the count of keys in Redis with the pattern 'users*'
 Rails.cache.redis.then { |c| c.keys('users*') }.size # 3
 ```
+
+*The example above uses Redis as the cache store*
 
 With cache versioning enabled, the new version will replace the existing entry in the cache store, leading to a smaller data size in the store:
 
@@ -136,6 +136,8 @@ end
 # Check the count of keys in Redis with the pattern 'users*'
 Rails.cache.redis.then { |c| c.keys('users*') }.size # 1
 ```
+
+*The example above uses Redis as the cache store*
 
 ### In Conclusion
 
