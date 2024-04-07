@@ -24,7 +24,7 @@ make: `image' is up to date.
 
 This behavior occurs because the image directory (the target of our make) already exists.
 
-To address this issue, the .PHONY directive comes into play. By listing image under the .PHONY directive, we instruct make to treat image as a phony target. This means that make will execute the image command regardless of whether the image file or directory exists:
+To address this issue, the `.PHONY` directive comes into play. By listing image under the `.PHONY` directive, we instruct make to treat image as a phony target. This means that make will execute the image command regardless of whether the image file or directory exists:
 
 ```makefile
 .PHONY: image
