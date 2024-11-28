@@ -2,7 +2,7 @@
 layout: post
 title: "Hotwire vs HTMX vs Unpoly"
 description: "Hotwire, HTMX, and Unpoly for building modern UIs."
-date: 2024-11-01
+date: 2024-11-28
 tags:
   - JavaScript
   - HTML
