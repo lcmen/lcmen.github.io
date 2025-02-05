@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "How Rails Releases Database Connections After Each Web Request"
-description: "how Rails releases database connections back to the pool after each web request."
+title: "Releasing database connections after each web request in Ruby on Rails"
+description: "Learn how Ruby on Rails releases database connections back to the pool after each web request."
 date: 2025-01-28
 tags:
   - Ruby on Rails
