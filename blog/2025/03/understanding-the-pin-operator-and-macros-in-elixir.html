@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>Understanding the Pin Operator and Macros in Elixir - Lucas Mendelowski</title>
+
+    <meta charset="utf-8" />
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
+    <meta name="description" content="Understanding the Pin Operator and Macros in Elixir by building custom DSL" />
+    <meta name="turbo-cache-control">
+
+    <meta property="og:title" content="Understanding the Pin Operator and Macros in Elixir - Lucas Mendelowski" />
+    <meta property="og:description" content="Understanding the Pin Operator and Macros in Elixir by building custom DSL" />
+    <meta property="og:image" content="https://www.mendelowski.com/assets/img/social.png" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://www.mendelowski.com" />
+    <meta property="og:site_name" content="Lucas Mendelowski" />
+
+    <meta name="twitter:title" content="Understanding the Pin Operator and Macros in Elixir - Lucas Mendelowski" />
+    <meta name="twitter:description" content="Understanding the Pin Operator and Macros in Elixir by building custom DSL" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="lmendelowski" />
+    <meta name="twitter:site" content="lmendelowski" />
+    <meta name="twitter:image" content="https://www.mendelowski.com/assets/img/social.png" />
+
+    <link rel="canonical" href="https://www.mendelowski.com/blog/2025/03/understanding-the-pin-operator-and-macros-in-elixir" />
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
+    <link crossorigin="crossorigin" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link crossorigin="crossorigin" href="https://unpkg.com" rel="preconnect" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" /></noscript>
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
+    <link rel="stylesheet" href="/assets/css/main.css" media="screen" data-turbo-track="reload">
+    <script src="/assets/js/main.js" data-turbo-track="reload"></script>
+    <script src="https://unpkg.com/@hotwired/turbo" defer></script>
+  </head>
+  <body>
+    <div id="main">
+      <header id="header" class="container mx-auto" data-turbo-permanent>
+  <div class="flex items-center justify-between py-6 lg:py-10">
+    <a href="/" class="flex items-center" aria-label="Homepage">
+      <img src="/assets/img/logo.svg" width="44" height="36" alt="logo" />
+    </a>
+    <div class="flex items-center lg:hidden">
+      <button id="menu" class="group z-50" aria-label="Mobile menu">
+        <svg
+          width="24"
+          height="15"
+          xmlns="http://www.w3.org/2000/svg"
+          class="relative z-50 fill-current text-primary transition-transform group-[.active]:fill-white group-[.active]:rotate-90"
+        >
+          <g fill-rule="evenodd">
+            <rect width="24" height="3" />
+            <rect y="6" width="24" height="3" />
+            <rect y="12" width="24" height="3" />
+          </g>
+        </svg>
+      </button>
+      <nav class="pointer-events-none fixed inset-0 z-30 flex bg-black bg-opacity-80 opacity-0 transition-opacity lg:hidden duration-300">
+        <div class="ml-auto w-2/3 bg-green p-4 md:w-1/3">
+          <ul class="mt-8 flex flex-col">
+            <li>
+              <a
+                href="/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Intro"
+              >Intro</a>
+            </li>
+
+            <li>
+              <a
+                href="/blog/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Blog"
+              >Blog</a>
+            </li>
+
+            <li>
+              <a
+                href="/til/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Today I Learned"
+              >Til</a>
+            </li>
+
+            <li>
+              <a
+                href="/uses/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Uses"
+              >Uses</a>
+            </li>
+
+            <li>
+              <a
+                href="/contact/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Contact"
+              >Contact</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="hidden lg:block">
+      <ul class="flex items-center">
+        <li class="group relative mr-6 mb-1">
+          <div class="absolute left-0 bottom-0 z-20 h-0 w-full opacity-75 transition-all group-hover:h-2 group-hover:bg-yellow">
+          </div>
+          <a
+            href="/"
+            class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
+            aria-label="Intro"
+          >Intro</a>
+        </li>
+
+        <li class="group relative mr-6 mb-1">
+          <div class="absolute left-0 bottom-0 z-20 h-0 w-full opacity-75 transition-all group-hover:h-2 group-hover:bg-yellow">
+          </div>
+          <a
+            href="/blog/"
+            class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
+            aria-label="Blog"
+          >Blog</a>
+        </li>
+
+        <li class="group relative mr-6 mb-1">
+          <div class="absolute left-0 bottom-0 z-20 h-0 w-full opacity-75 transition-all group-hover:h-2 group-hover:bg-yellow">
+          </div>
+          <a
+            href="/til/"
+            class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
+            aria-label="Today I Learned"
+          >Til</a>
+        </li>
+
+        <li class="group relative mr-6 mb-1">
+          <div class="absolute left-0 bottom-0 z-20 h-0 w-full opacity-75 transition-all group-hover:h-2 group-hover:bg-yellow">
+          </div>
+          <a
+            href="/uses/"
+            class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
+            aria-label="Uses"
+          >Uses</a>
+        </li>
+
+        <li class="group relative mr-6 mb-1">
+          <div class="absolute left-0 bottom-0 z-20 h-0 w-full opacity-75 transition-all group-hover:h-2 group-hover:bg-yellow">
+          </div>
+          <a
+            href="/contact/"
+            class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
+            aria-label="Contact"
+          >Contact</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+      <div>
+        <div class="container mx-auto">
+          <article class="mb-8">
+  <p class="mb-4">
+    
+      <span class="inline-block rounded-full bg-secondary px-2 py-1 font-body text-sm text-white">
+  #Elixir
+</span>
+
+    
+  </p>
+  <h2 class="block font-body text-3xl font-semibold leading-tight text-primary transition-colors">
+    Understanding the Pin Operator and Macros in Elixir
+  </h2>
+  <div class="flex items-center gap-2 py-4 font-body text-grey">
+    <p class="font-light">
+      March 31, 2025
+    </p>
+    <span>//</span>
+    <p class="font-light">
+      4 min read
+    </p>
+  </div>
+  <content class="prose prose max-w-none">
+    <p>Recently, while reading the Ash Framework book, I stumbled upon the pin (<code class="language-plaintext highlighter-rouge">^</code>) operator within the <code class="language-plaintext highlighter-rouge">expr</code> macro. While I was familiar with using the pin operator in Elixir for pattern matching to match against a specific value (rather than rebinding to a variable), I wasn’t aware of its use in macros. As I dove deeper into this area, I discovered that the pin operator is just a convention for macros, not a specific language feature.</p>
+
+<p>In this post, I’ll share my journey to understand how these concepts work together, starting with simple examples and moving to more complex ones.</p>
+
+<h2 id="the-pin-operator-beyond-pattern-matching">The Pin Operator: Beyond Pattern Matching</h2>
+
+<p>Most Elixir developers are familiar with the pin operator in pattern matching:</p>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="o">^</span><span class="n">x</span> <span class="o">=</span> <span class="mi">42</span>  <span class="c1"># This matches because x is pinned to 42</span>
+<span class="o">^</span><span class="n">x</span> <span class="o">=</span> <span class="mi">43</span>  <span class="c1"># This fails because x is pinned to 42</span>
+</code></pre></div></div>
+
+<p>In metaprogramming and DSLs, it has become a widely adopted convention to indicate that a value should be evaluated rather than treated as a symbol or variable name. This convention is used in many popular libraries like Ash Framework and Ecto.</p>
+
+<h2 id="understanding-quote-and-unquote">Understanding quote and unquote</h2>
+
+<p>Before we dive into examples, let’s explore two fundamental concepts in Elixir metaprogramming: <code class="language-plaintext highlighter-rouge">quote</code> and <code class="language-plaintext highlighter-rouge">unquote</code>. These fundamental building blocks enable the creation of macros and DSLs.</p>
+
+<h3 id="what-is-quote">What is quote?</h3>
+
+<p>In Elixir, code is represented internally as an Abstract Syntax Tree (AST). <code class="language-plaintext highlighter-rouge">quote</code> is a macro that takes Elixir code and returns its AST representation. Think of it as a way to translate our code into a data structure that we can further manipulate.</p>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">iex</span><span class="o">&gt;</span> <span class="kn">quote</span> <span class="k">do</span><span class="p">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span>
+<span class="p">{</span><span class="ss">:+</span><span class="p">,</span> <span class="p">[</span><span class="ss">context:</span> <span class="no">Elixir</span><span class="p">,</span> <span class="ss">imports:</span> <span class="p">[{</span><span class="mi">1</span><span class="p">,</span> <span class="no">Kernel</span><span class="p">},</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="no">Kernel</span><span class="p">}]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]}</span>
+
+<span class="n">iex</span><span class="o">&gt;</span> <span class="kn">quote</span> <span class="k">do</span><span class="p">:</span> <span class="s2">"hello"</span>
+<span class="s2">"hello"</span>
+
+<span class="n">iex</span><span class="o">&gt;</span> <span class="kn">quote</span> <span class="k">do</span><span class="p">:</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="p">{:</span><span class="o">=</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[{</span><span class="ss">:x</span><span class="p">,</span> <span class="p">[],</span> <span class="no">Elixir</span><span class="p">},</span> <span class="mi">42</span><span class="p">]}</span>
+</code></pre></div></div>
+
+<p>This AST structure consists of:</p>
+
+<ul>
+  <li>The operation (like <code class="language-plaintext highlighter-rouge">:+</code>, <code class="language-plaintext highlighter-rouge">:=</code>)</li>
+  <li>Metadata (like context and imports)</li>
+  <li>Arguments (the values being operated on)</li>
+</ul>
+
+<h3 id="what-is-unquote">What is unquote?</h3>
+
+<p>While <code class="language-plaintext highlighter-rouge">quote</code> lets us convert our code to AST, <code class="language-plaintext highlighter-rouge">unquote</code> allows us to inject values into quoted expressions.</p>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">iex</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">iex</span><span class="o">&gt;</span> <span class="kn">quote</span> <span class="k">do</span><span class="p">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="kn">unquote</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="p">{</span><span class="ss">:+</span><span class="p">,</span> <span class="p">[</span><span class="ss">context:</span> <span class="no">Elixir</span><span class="p">,</span> <span class="ss">imports:</span> <span class="p">[{</span><span class="mi">1</span><span class="p">,</span> <span class="no">Kernel</span><span class="p">},</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="no">Kernel</span><span class="p">}]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">42</span><span class="p">]}</span>
+</code></pre></div></div>
+
+<p>Without <code class="language-plaintext highlighter-rouge">unquote</code>, we’d get:</p>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">iex</span><span class="o">&gt;</span> <span class="kn">quote</span> <span class="k">do</span><span class="p">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span>
+<span class="p">{</span><span class="ss">:+</span><span class="p">,</span> <span class="p">[</span><span class="ss">context:</span> <span class="no">Elixir</span><span class="p">,</span> <span class="ss">imports:</span> <span class="p">[{</span><span class="mi">1</span><span class="p">,</span> <span class="no">Kernel</span><span class="p">},</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="no">Kernel</span><span class="p">}]],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span><span class="ss">:x</span><span class="p">,</span> <span class="p">[],</span> <span class="no">Elixir</span><span class="p">}]}</span>
+</code></pre></div></div>
+
+<p>The difference is crucial:</p>
+
+<ul>
+  <li>With <code class="language-plaintext highlighter-rouge">unquote</code>, we get the actual value (42)</li>
+  <li>Without <code class="language-plaintext highlighter-rouge">unquote</code>, we get the variable name as an AST node</li>
+</ul>
+
+<p>We can verify our assumptions in the <code class="language-plaintext highlighter-rouge">iex</code> console:</p>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">iex</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">iex</span><span class="o">&gt;</span> <span class="n">ast1</span> <span class="o">=</span> <span class="kn">quote</span> <span class="k">do</span><span class="p">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="kn">unquote</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">iex</span><span class="o">&gt;</span> <span class="n">ast2</span> <span class="o">=</span> <span class="kn">quote</span> <span class="k">do</span><span class="p">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span>
+<span class="n">iex</span><span class="o">&gt;</span> <span class="no">Code</span><span class="o">.</span><span class="n">eval_quoted</span><span class="p">(</span><span class="n">ast1</span><span class="p">)</span>
+<span class="p">{</span><span class="mi">43</span><span class="p">,</span> <span class="p">[]}</span>
+<span class="n">iex</span><span class="o">&gt;</span> <span class="no">Code</span><span class="o">.</span><span class="n">eval_quoted</span><span class="p">(</span><span class="n">ast2</span><span class="p">)</span>
+<span class="ss">error:</span> <span class="n">undefined</span> <span class="n">variable</span> <span class="s2">"x"</span> <span class="p">(</span><span class="n">context</span> <span class="no">Elixir</span><span class="p">)</span>
+<span class="err">└─</span> <span class="ss">nofile:</span><span class="mi">1</span>
+
+<span class="o">**</span> <span class="p">(</span><span class="no">CompileError</span><span class="p">)</span> <span class="n">cannot</span> <span class="n">compile</span> <span class="n">code</span> <span class="p">(</span><span class="n">errors</span> <span class="n">have</span> <span class="n">been</span> <span class="n">logged</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>We received an error because <code class="language-plaintext highlighter-rouge">x</code> is not defined within <code class="language-plaintext highlighter-rouge">quote</code>.</p>
+
+<h3 id="how-do-they-work-in-tandem">How do they work in tandem?</h3>
+
+<p>A crucial thing to understand is that <strong>macros return AST</strong>. This is why we need <code class="language-plaintext highlighter-rouge">quote</code> - it generates the AST that the macro will return. Without <code class="language-plaintext highlighter-rouge">quote</code>, we would be trying to execute the code directly (e.g., defining a function in the macro itself) instead of returning its AST representation.</p>
+
+<p>It tells Elixir “this is the code I want you to generate” rather than “this is the code I want you to execute now.” They are helpful when we want to run Elixir functions on existing AST - we use <code class="language-plaintext highlighter-rouge">unquote</code> to inject AST structures as arguments into functions and then <code class="language-plaintext highlighter-rouge">quote</code> it to return a new AST.</p>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">defmodule</span> <span class="no">Example</span> <span class="k">do</span>
+  <span class="k">defmacro</span> <span class="n">create_function</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">do</span>
+    <span class="kn">quote</span> <span class="k">do</span>
+      <span class="k">def</span> <span class="kn">unquote</span><span class="p">(</span><span class="n">name</span><span class="p">)()</span> <span class="k">do</span>
+        <span class="mi">2</span> <span class="o">*</span> <span class="kn">unquote</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">defmodule</span> <span class="no">Test</span> <span class="k">do</span>
+  <span class="kn">import</span> <span class="no">Example</span>
+
+  <span class="n">create_function</span><span class="p">(</span><span class="ss">:answer</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="n">iex</span><span class="o">&gt;</span> <span class="no">Test</span><span class="o">.</span><span class="n">answer</span><span class="p">()</span>
+<span class="mi">42</span>
+</code></pre></div></div>
+
+<p>In this example:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">quote</code> captures the function definition as AST that will be returned from the macro</li>
+  <li><code class="language-plaintext highlighter-rouge">unquote</code> injects name and value into the function definition</li>
+  <li>The function gets defined through the macro</li>
+</ol>
+
+<h2 id="a-simple-example-building-a-basic-expression-dsl">A Simple Example: Building a Basic Expression DSL</h2>
+
+<p>Let’s start with a simple example that demonstrates how the pin operator can be used to create a basic expression DSL:</p>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">defmodule</span> <span class="no">SimpleDSL</span> <span class="k">do</span>
+  <span class="k">defmacro</span> <span class="n">expr</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span> <span class="k">do</span>
+    <span class="k">case</span> <span class="n">expression</span> <span class="k">do</span>
+      <span class="p">{:</span><span class="o">^</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="p">]}</span> <span class="o">-&gt;</span>
+        <span class="kn">quote</span> <span class="k">do</span>
+          <span class="n">value</span> <span class="o">=</span> <span class="kn">unquote</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+          <span class="s2">"literal(</span><span class="si">#{</span><span class="n">value</span><span class="si">}</span><span class="s2">)"</span>
+        <span class="k">end</span>
+
+      <span class="n">other</span> <span class="o">-&gt;</span>
+        <span class="n">other</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">defmodule</span> <span class="no">Example</span> <span class="k">do</span>
+  <span class="kn">import</span> <span class="no">SimpleDSL</span>
+
+  <span class="k">def</span> <span class="n">demo</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">inspect</span><span class="p">(</span><span class="n">expr</span><span class="p">(</span><span class="o">^</span><span class="n">x</span><span class="p">))</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">inspect</span><span class="p">(</span><span class="n">expr</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">iex</span><span class="o">&gt;</span> <span class="no">Example</span><span class="o">.</span><span class="n">demo</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
+<span class="s2">"literal(42)"</span>
+<span class="mi">42</span>
+</code></pre></div></div>
+
+<p>In this example:</p>
+
+<ol>
+  <li>We create a macro that pattern matches against AST</li>
+  <li>For the pin operator node, the value is injected into the <code class="language-plaintext highlighter-rouge">literal</code> function call</li>
+  <li>For other AST node types, we simply keep them unchanged</li>
+  <li>We call the macro with both pinned and non-pinned variables</li>
+</ol>
+
+<h2 id="a-more-complex-example">A More Complex Example</h2>
+
+<p>Now, let’s try a more complex example that demonstrates generating some dynamic expression:</p>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">defmodule</span> <span class="no">AdvancedDSL</span> <span class="k">do</span>
+  <span class="k">defmacro</span> <span class="n">expr</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">inspect</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
+
+    <span class="n">expression</span>
+    <span class="o">|&gt;</span> <span class="n">expand</span><span class="p">()</span>
+    <span class="o">|&gt;</span> <span class="n">build</span><span class="p">()</span>
+  <span class="k">end</span>
+
+  <span class="c1"># First phase - expand AST</span>
+  <span class="k">defp</span> <span class="n">expand</span><span class="p">(</span><span class="n">ast</span><span class="p">)</span> <span class="k">do</span>
+    <span class="k">case</span> <span class="n">ast</span> <span class="k">do</span>
+      <span class="p">{:</span><span class="o">^</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="p">]}</span> <span class="o">-&gt;</span>
+        <span class="p">{</span><span class="ss">:inject</span><span class="p">,</span> <span class="n">value</span><span class="p">}</span>
+      <span class="p">{</span><span class="n">name</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="no">nil</span><span class="p">}</span> <span class="ow">when</span> <span class="n">is_atom</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span>
+        <span class="p">{</span><span class="ss">:symbol</span><span class="p">,</span> <span class="n">name</span><span class="p">}</span>
+
+      <span class="p">{</span><span class="n">name</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">args</span><span class="p">}</span> <span class="ow">when</span> <span class="n">is_list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">-&gt;</span>
+        <span class="p">{</span><span class="n">name</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="no">Enum</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">expand</span><span class="o">/</span><span class="mi">1</span><span class="p">)}</span>
+
+      <span class="n">other</span> <span class="o">-&gt;</span>
+        <span class="n">other</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1"># Second phase: Build SQL string from intermediate representation</span>
+  <span class="k">def</span> <span class="n">build</span><span class="p">({</span><span class="ss">:+</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="p">[</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">]})</span> <span class="k">do</span>
+    <span class="n">left_sql</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="n">left</span><span class="p">)</span>
+    <span class="n">right_sql</span> <span class="o">=</span> <span class="n">build</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
+
+    <span class="c1"># We need to quote as we want to inject left and right operands into concatenation operation</span>
+    <span class="kn">quote</span> <span class="k">do</span>
+      <span class="kn">unquote</span><span class="p">(</span><span class="n">left_sql</span><span class="p">)</span> <span class="o">&lt;&gt;</span> <span class="s2">"_"</span> <span class="o">&lt;&gt;</span> <span class="kn">unquote</span><span class="p">(</span><span class="n">right_sql</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="c1"># We use `quote` to inject pinned values into `to_string` method and return new AST</span>
+  <span class="k">def</span> <span class="n">build</span><span class="p">({</span><span class="ss">:inject</span><span class="p">,</span> <span class="n">value</span><span class="p">})</span> <span class="k">do</span>
+    <span class="kn">quote</span> <span class="k">do</span>
+      <span class="n">to_string</span><span class="p">(</span><span class="kn">unquote</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">build</span><span class="p">({</span><span class="ss">:symbol</span><span class="p">,</span> <span class="n">name</span><span class="p">})</span> <span class="k">do</span>
+    <span class="kn">quote</span> <span class="k">do</span>
+      <span class="n">to_string</span><span class="p">(</span><span class="kn">unquote</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">defmodule</span> <span class="no">Example</span> <span class="k">do</span>
+  <span class="kn">import</span> <span class="no">AdvancedDSL</span>
+
+  <span class="k">def</span> <span class="n">generate</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">expr</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="o">^</span><span class="n">points</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">iex</span><span class="o">&gt;</span> <span class="no">Example</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="s2">"prefix_5"</span>
+</code></pre></div></div>
+
+<p>Let’s break down what happens when we use our DSL:</p>
+
+<ol>
+  <li>When we write <code class="language-plaintext highlighter-rouge">expr(score + ^points)</code>, the macro receives the AST:</li>
+</ol>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="ss">:+</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[{</span><span class="ss">:prefix</span><span class="p">,</span> <span class="p">[],</span> <span class="no">nil</span><span class="p">},</span> <span class="p">{:</span><span class="o">^</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[{</span><span class="ss">:points</span><span class="p">,</span> <span class="p">[],</span> <span class="no">nil</span><span class="p">}]}]}</span>
+</code></pre></div></div>
+
+<ol>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">expand/1</code> processes the AST:</p>
+
+    <ul>
+      <li>It finds the pin operator</li>
+      <li>Converts the pinned value into a custom <code class="language-plaintext highlighter-rouge">inject</code> tuple</li>
+      <li>Converts atom value into custom <code class="language-plaintext highlighter-rouge">symbol</code> tuple</li>
+      <li>Preserves the structure of the expression</li>
+    </ul>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">build/1</code> converts the processed AST into string:</p>
+    <ul>
+      <li>Converts inject to strings</li>
+      <li>Converts symbol to strings</li>
+      <li>Handles concatenation</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The pin operator and macros are powerful tools for creating custom DSLs in Elixir. While they might seem complex at first, understanding how they work together opens up possibilities for creating expressive and powerful abstractions. These techniques can be applied in real-world projects to create elegant and maintainable domain-specific languages.</p>
+
+<p>I hope that through the examples we’ve explored, we can see how these concepts combine to create elegant and maintainable domain-specific languages.</p>
+
+  </content >
+</article>
+
+        </div>
+      </div>
+
+      <footer id="footer" class="container mx-auto">
+  <div class="flex flex-col items-center justify-between border-t border-grey-lighter py-10 sm:flex-row sm:py-12">
+    <p class="font-body font-light text-primary">
+      &copy; 2025 Lucas Mendelowski
+    </p>
+    <div class="flex items-center pt-5 gap-5 sm:pt-0">
+      
+        <a href="https://github.com/lcmen" target="_blank" rel="nofollow noopener noreferrer" target="_blank" aria-label="github">
+          <i class="text-4xl text-primary hover:text-secondary transition-colors bx bxl-github"></i>
+        </a>
+      
+        <a href="https://www.linkedin.com/in/lucasmendelowski/" target="_blank" rel="nofollow noopener noreferrer" target="_blank" aria-label="linkedin">
+          <i class="text-4xl text-primary hover:text-secondary transition-colors bx bxl-linkedin"></i>
+        </a>
+      
+        <a href="https://twitter.com/lmendelowski" target="_blank" rel="nofollow noopener noreferrer" target="_blank" aria-label="twitter">
+          <i class="text-4xl text-primary hover:text-secondary transition-colors bx bxl-twitter"></i>
+        </a>
+      
+    </div>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>
