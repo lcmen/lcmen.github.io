@@ -111,7 +111,7 @@ defmodule Test do
 end
 
 iex> Test.answer()
-42
+84
 ```
 
 In this example:
