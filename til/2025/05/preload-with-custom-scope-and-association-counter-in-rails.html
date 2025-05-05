@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>Preload Data with custom scope and association counter in Rails - Lucas Mendelowski</title>
+
+    <meta charset="utf-8" />
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
+    <meta name="description" content="Learn how to preload data with custom scope and association counter in Rails." />
+    <meta name="turbo-cache-control">
+
+    <meta property="og:title" content="Preload Data with custom scope and association counter in Rails - Lucas Mendelowski" />
+    <meta property="og:description" content="Learn how to preload data with custom scope and association counter in Rails." />
+    <meta property="og:image" content="https://www.mendelowski.com/assets/img/social.png" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="https://www.mendelowski.com" />
+    <meta property="og:site_name" content="Lucas Mendelowski" />
+
+    <meta name="twitter:title" content="Preload Data with custom scope and association counter in Rails - Lucas Mendelowski" />
+    <meta name="twitter:description" content="Learn how to preload data with custom scope and association counter in Rails." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="lmendelowski" />
+    <meta name="twitter:site" content="lmendelowski" />
+    <meta name="twitter:image" content="https://www.mendelowski.com/assets/img/social.png" />
+
+    <link rel="canonical" href="https://www.mendelowski.com/til/2025/05/preload-with-custom-scope-and-association-counter-in-rails" />
+    <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
+    <link crossorigin="crossorigin" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link crossorigin="crossorigin" href="https://unpkg.com" rel="preconnect" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" /></noscript>
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
+    <link rel="stylesheet" href="/assets/css/main.css" media="screen" data-turbo-track="reload">
+    <script src="/assets/js/main.js" data-turbo-track="reload"></script>
+    <script src="https://unpkg.com/@hotwired/turbo" defer></script>
+  </head>
+  <body>
+    <div id="main">
+      <header id="header" class="container mx-auto" data-turbo-permanent>
+  <div class="flex items-center justify-between py-6 lg:py-10">
+    <a href="/" class="flex items-center" aria-label="Homepage">
+      <img src="/assets/img/logo.svg" width="44" height="36" alt="logo" />
+    </a>
+    <div class="flex items-center lg:hidden">
+      <button id="menu" class="group z-50" aria-label="Mobile menu">
+        <svg
+          width="24"
+          height="15"
+          xmlns="http://www.w3.org/2000/svg"
+          class="relative z-50 fill-current text-primary transition-transform group-[.active]:fill-white group-[.active]:rotate-90"
+        >
+          <g fill-rule="evenodd">
+            <rect width="24" height="3" />
+            <rect y="6" width="24" height="3" />
+            <rect y="12" width="24" height="3" />
+          </g>
+        </svg>
+      </button>
+      <nav class="pointer-events-none fixed inset-0 z-30 flex bg-black bg-opacity-80 opacity-0 transition-opacity lg:hidden duration-300">
+        <div class="ml-auto w-2/3 bg-green p-4 md:w-1/3">
+          <ul class="mt-8 flex flex-col">
+            <li>
+              <a
+                href="/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Intro"
+              >Intro</a>
+            </li>
+
+            <li>
+              <a
+                href="/blog/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Blog"
+              >Blog</a>
+            </li>
+
+            <li>
+              <a
+                href="/til/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Today I Learned"
+              >Til</a>
+            </li>
+
+            <li>
+              <a
+                href="/uses/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Uses"
+              >Uses</a>
+            </li>
+
+            <li>
+              <a
+                href="/contact/"
+                class="mb-3 block px-2 font-body text-lg font-medium text-white"
+                aria-label="Contact"
+              >Contact</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="hidden lg:block">
+      <ul class="flex items-center">
+        <li class="group relative mr-6 mb-1">
+          <div class="absolute left-0 bottom-0 z-20 h-0 w-full opacity-75 transition-all group-hover:h-2 group-hover:bg-yellow">
+          </div>
+          <a
+            href="/"
+            class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
+            aria-label="Intro"
+          >Intro</a>
+        </li>
+
+        <li class="group relative mr-6 mb-1">
+          <div class="absolute left-0 bottom-0 z-20 h-0 w-full opacity-75 transition-all group-hover:h-2 group-hover:bg-yellow">
+          </div>
+          <a
+            href="/blog/"
+            class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
+            aria-label="Blog"
+          >Blog</a>
+        </li>
+
+        <li class="group relative mr-6 mb-1">
+          <div class="absolute left-0 bottom-0 z-20 h-0 w-full opacity-75 transition-all group-hover:h-2 group-hover:bg-yellow">
+          </div>
+          <a
+            href="/til/"
+            class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
+            aria-label="Today I Learned"
+          >Til</a>
+        </li>
+
+        <li class="group relative mr-6 mb-1">
+          <div class="absolute left-0 bottom-0 z-20 h-0 w-full opacity-75 transition-all group-hover:h-2 group-hover:bg-yellow">
+          </div>
+          <a
+            href="/uses/"
+            class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
+            aria-label="Uses"
+          >Uses</a>
+        </li>
+
+        <li class="group relative mr-6 mb-1">
+          <div class="absolute left-0 bottom-0 z-20 h-0 w-full opacity-75 transition-all group-hover:h-2 group-hover:bg-yellow">
+          </div>
+          <a
+            href="/contact/"
+            class="relative z-30 block px-2 font-body text-lg font-medium text-primary transition-colors group-hover:text-green"
+            aria-label="Contact"
+          >Contact</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+
+      <div>
+        <div class="container mx-auto">
+          <article class="mb-8">
+  <p class="mb-4">
+    
+      <span class="inline-block rounded-full bg-secondary px-2 py-1 font-body text-sm text-white">
+  #rails
+</span>
+
+    
+      <span class="inline-block rounded-full bg-secondary px-2 py-1 font-body text-sm text-white">
+  #postgresql
+</span>
+
+    
+  </p>
+  <h2 class="block font-body text-3xl font-semibold leading-tight text-primary transition-colors">
+    Preload Data with custom scope and association counter in Rails
+  </h2>
+  <div class="flex items-center gap-2 py-4 font-body text-grey">
+    <p class="font-light">
+      May 05, 2025
+    </p>
+    <span>//</span>
+    <p class="font-light">
+      1 min read
+    </p>
+  </div>
+  <content class="prose prose max-w-none">
+    <p>Recently, I needed to load records with a counter on related records and preload some other associations.</p>
+
+<p>Think about Teams, where you need to count the number of memberships and preload the latest five members to show them on the page with their avatars.</p>
+
+<p>In this short note, I will show you how to do it step by step.</p>
+
+<p>Before we dive into the solution, let’s summarize the models and their associations:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Team</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+  <span class="n">has_many</span> <span class="ss">:memberships</span>
+  <span class="n">has_many</span> <span class="ss">:users</span><span class="p">,</span> <span class="ss">through: :memberships</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Membership</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+  <span class="n">belongs_to</span> <span class="ss">:team</span>
+  <span class="n">belongs_to</span> <span class="ss">:user</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
+  <span class="n">has_many</span> <span class="ss">:memberships</span>
+  <span class="n">has_many</span> <span class="ss">:teams</span><span class="p">,</span> <span class="ss">through: :memberships</span>
+  <span class="n">has_one_attached</span> <span class="ss">:avatar</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h1 id="step-1-include-the-number-of-memberships">Step 1: Include the number of memberships</h1>
+
+<p>To count the number of associated records in Ruby on Rails we can use <code class="language-plaintext highlighter-rouge">joins</code> and then <code class="language-plaintext highlighter-rouge">group</code> the records by the main
+model then use <code class="language-plaintext highlighter-rouge">count</code> on the association.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">teams</span> <span class="o">=</span> <span class="no">Team</span>
+  <span class="p">.</span><span class="nf">joins</span><span class="p">(</span><span class="ss">:memberships</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="s1">'teams.*, COUNT(memberships.id) AS memberships_count'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">group</span><span class="p">(</span><span class="s1">'teams.id'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>To make it easier to use we can define a scope in the <code class="language-plaintext highlighter-rouge">Team</code> model:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">with_memberships_count</span>
+  <span class="n">joins</span><span class="p">(</span><span class="ss">:memberships</span><span class="p">)</span>
+    <span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="s1">'teams.*, COUNT(memberships.id) AS memberships_count'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nf">group</span><span class="p">(</span><span class="s1">'teams.id'</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h1 id="step-2-define-the-association-for-the-most-recent-members">Step 2: Define the association for the most recent members</h1>
+
+<p>Next, we need to define the association for the most recent members. We can do this by using a virtual <code class="language-plaintext highlighter-rouge">has_many</code> association:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">has_many</span> <span class="ss">:memberships</span>
+<span class="n">has_many</span> <span class="ss">:recent_memberships</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">order</span><span class="p">(</span><span class="ss">created_at: :desc</span><span class="p">).</span><span class="nf">limit</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">},</span> <span class="ss">class_name: </span><span class="s1">'Membership'</span>
+</code></pre></div></div>
+
+<p>By defining this association, we can easily preload these recent memberships when we load the teams:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">teams</span> <span class="o">=</span> <span class="no">Team</span><span class="p">.</span><span class="nf">preload</span><span class="p">(</span><span class="ss">recent_memberships: :user</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="step-3-define-scope-to-preload-avatars-for-the-users">Step 3: Define scope to preload avatars for the users</h1>
+
+<p>Assuming that the <code class="language-plaintext highlighter-rouge">User</code> model has an <code class="language-plaintext highlighter-rouge">avatar</code> association via <code class="language-plaintext highlighter-rouge">has_one_attached</code>, we can define a scope to preload the
+avatars:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scope</span> <span class="ss">:with_avatars</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">includes</span><span class="p">(</span><span class="ss">avatar_attachment: </span><span class="p">{</span> <span class="ss">blob: </span><span class="p">{</span> <span class="ss">variant_records: </span><span class="p">{</span> <span class="ss">image_attachment: :blob</span> <span class="p">}</span> <span class="p">}</span> <span class="p">})</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<h1 id="step-4-combine-everything-together">Step 4: Combine everything together</h1>
+
+<p>Now we can combine everything together and take the advantage of the <code class="language-plaintext highlighter-rouge">ActiveRecord::Associations::Preloader</code> to specify additional scopes for the preloaded associations:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scope</span> <span class="o">=</span> <span class="no">Team</span><span class="p">.</span><span class="nf">with_memberships_count</span>
+<span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Associations</span><span class="o">::</span><span class="no">Preloader</span>
+  <span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">records: </span><span class="n">scope</span><span class="p">,</span> <span class="ss">associations: :recent_memberships</span><span class="p">,</span> <span class="ss">scope: </span><span class="no">Membership</span><span class="p">.</span><span class="nf">merge</span><span class="p">(</span><span class="no">User</span><span class="p">.</span><span class="nf">with_avatars</span><span class="p">))</span>
+  <span class="p">.</span><span class="nf">call</span>
+</code></pre></div></div>
+
+  </content >
+</article>
+
+        </div>
+      </div>
+
+      <footer id="footer" class="container mx-auto">
+  <div class="flex flex-col items-center justify-between border-t border-grey-lighter py-10 sm:flex-row sm:py-12">
+    <p class="font-body font-light text-primary">
+      &copy; 2025 Lucas Mendelowski
+    </p>
+    <div class="flex items-center pt-5 gap-5 sm:pt-0">
+      
+        <a href="https://github.com/lcmen" target="_blank" rel="nofollow noopener noreferrer" target="_blank" aria-label="github">
+          <i class="text-4xl text-primary hover:text-secondary transition-colors bx bxl-github"></i>
+        </a>
+      
+        <a href="https://www.linkedin.com/in/lucasmendelowski/" target="_blank" rel="nofollow noopener noreferrer" target="_blank" aria-label="linkedin">
+          <i class="text-4xl text-primary hover:text-secondary transition-colors bx bxl-linkedin"></i>
+        </a>
+      
+        <a href="https://twitter.com/lmendelowski" target="_blank" rel="nofollow noopener noreferrer" target="_blank" aria-label="twitter">
+          <i class="text-4xl text-primary hover:text-secondary transition-colors bx bxl-twitter"></i>
+        </a>
+      
+    </div>
+  </div>
+</footer>
+
+    </div>
+  </body>
+</html>
