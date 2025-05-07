@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="en-US">
   <head>
-    <title>Preload Data with custom scope and association counter in Rails - Lucas Mendelowski</title>
+    <title>Preloading data with custom scopes and counting association records in Rails - Lucas Mendelowski</title>
 
     <meta charset="utf-8" />
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
     <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport" />
-    <meta name="description" content="Learn how to preload data with custom scope and association counter in Rails." />
+    <meta name="description" content="Learn how to preload data with custom scopes and count association records in Ruby on Rails." />
     <meta name="turbo-cache-control">
 
-    <meta property="og:title" content="Preload Data with custom scope and association counter in Rails - Lucas Mendelowski" />
-    <meta property="og:description" content="Learn how to preload data with custom scope and association counter in Rails." />
+    <meta property="og:title" content="Preloading data with custom scopes and counting association records in Rails - Lucas Mendelowski" />
+    <meta property="og:description" content="Learn how to preload data with custom scopes and count association records in Ruby on Rails." />
     <meta property="og:image" content="https://www.mendelowski.com/assets/img/social.png" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="https://www.mendelowski.com" />
     <meta property="og:site_name" content="Lucas Mendelowski" />
 
-    <meta name="twitter:title" content="Preload Data with custom scope and association counter in Rails - Lucas Mendelowski" />
-    <meta name="twitter:description" content="Learn how to preload data with custom scope and association counter in Rails." />
+    <meta name="twitter:title" content="Preloading data with custom scopes and counting association records in Rails - Lucas Mendelowski" />
+    <meta name="twitter:description" content="Learn how to preload data with custom scopes and count association records in Ruby on Rails." />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:creator" content="lmendelowski" />
     <meta name="twitter:site" content="lmendelowski" />
     <meta name="twitter:image" content="https://www.mendelowski.com/assets/img/social.png" />
 
-    <link rel="canonical" href="https://www.mendelowski.com/2025-05-05-preload-with-custom-scope-and-association-counter-in-rails.html" />
+    <link rel="canonical" href="https://www.mendelowski.com/til/2025/05/preload-with-custom-scope-and-association-counter-in-rails" />
     <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
     <link crossorigin="crossorigin" href="https://fonts.gstatic.com" rel="preconnect" />
     <link crossorigin="crossorigin" href="https://unpkg.com" rel="preconnect" />
@@ -176,25 +176,25 @@
     
   </p>
   <h2 class="block font-body text-3xl font-semibold leading-tight text-primary transition-colors">
-    Preload Data with custom scope and association counter in Rails
+    Preloading data with custom scopes and counting association records in Rails
   </h2>
   <div class="flex items-center gap-2 py-4 font-body text-grey">
     <p class="font-light">
-      May 05, 2025
+      May 07, 2025
     </p>
     <span>//</span>
     <p class="font-light">
-      1 min read
+      2 min read
     </p>
   </div>
   <content class="prose prose max-w-none">
-    <p>Recently, I needed to load records with a counter on related records and preload some other associations.</p>
+    <p>Recently, I needed to load records with a counter on one of the associations and preload some others.</p>
 
-<p>Think about Teams, where you need to count the number of memberships and preload the latest five members to show them on the page with their avatars.</p>
+<p>Think about Teams, where you need to count all members and preload just the recent ones to show them on the page with their avatars.</p>
 
-<p>In this short note, I will show you how to do it step by step.</p>
+<p>In this short note, I will show you how to approach it step by step.</p>
 
-<p>Before we dive into the solution, let’s summarize the models and their associations:</p>
+<p>Before we dive into the solution, let’s highlight the models and their associations:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Team</span> <span class="o">&lt;</span> <span class="no">ApplicationRecord</span>
   <span class="n">has_many</span> <span class="ss">:memberships</span>
@@ -213,10 +213,9 @@
 <span class="k">end</span>
 </code></pre></div></div>
 
-<h1 id="step-1-include-the-number-of-memberships">Step 1: Include the number of memberships</h1>
+<h2 id="step-1-count-team-members">Step 1: Count team members</h2>
 
-<p>To count the number of associated records in Ruby on Rails we can use <code class="language-plaintext highlighter-rouge">joins</code> and then <code class="language-plaintext highlighter-rouge">group</code> the records by the main
-model then use <code class="language-plaintext highlighter-rouge">count</code> on the association.</p>
+<p>To count the number of associated records in Ruby on Rails, we can use joins and then group the records by the main model, followed by applying count on the association.</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">teams</span> <span class="o">=</span> <span class="no">Team</span>
   <span class="p">.</span><span class="nf">joins</span><span class="p">(</span><span class="ss">:memberships</span><span class="p">)</span>
@@ -224,39 +223,74 @@ model then use <code class="language-plaintext highlighter-rouge">count</code> o
   <span class="p">.</span><span class="nf">group</span><span class="p">(</span><span class="s1">'teams.id'</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>To make it easier to use we can define a scope in the <code class="language-plaintext highlighter-rouge">Team</code> model:</p>
+<p>To make it easier to use, we define a scope in the <code class="language-plaintext highlighter-rouge">Team</code> model:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">with_memberships_count</span>
   <span class="n">joins</span><span class="p">(</span><span class="ss">:memberships</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="s1">'teams.*, COUNT(memberships.id) AS memberships_count'</span><span class="p">)</span>
     <span class="p">.</span><span class="nf">group</span><span class="p">(</span><span class="s1">'teams.id'</span><span class="p">)</span>
+    <span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="s1">'teams.*, COUNT(memberships.id) AS memberships_count'</span><span class="p">)</span>
 <span class="k">end</span>
 </code></pre></div></div>
 
-<h1 id="step-2-define-the-association-for-the-most-recent-members">Step 2: Define the association for the most recent members</h1>
+<h2 id="step-2-define-the-most-recent-members">Step 2: Define the most recent members</h2>
 
-<p>Next, we need to define the association for the most recent members. We can do this by using a virtual <code class="language-plaintext highlighter-rouge">has_many</code> association:</p>
+<p>Next, we need to define the association for the most recent members. We can do this by using a virtual has_many association (this is not a real association but more like a read-only association that retrieves a subset of records from the parent association):</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">has_many</span> <span class="ss">:memberships</span>
-<span class="n">has_many</span> <span class="ss">:recent_memberships</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">order</span><span class="p">(</span><span class="ss">created_at: :desc</span><span class="p">).</span><span class="nf">limit</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">},</span> <span class="ss">class_name: </span><span class="s1">'Membership'</span>
+<span class="n">has_many</span> <span class="ss">:recent_memberships</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">recent</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">},</span> <span class="ss">class_name: </span><span class="s1">'Membership'</span><span class="p">,</span> <span class="ss">inverse_of: :team</span><span class="p">,</span> <span class="ss">dependent: </span><span class="kp">nil</span>
 </code></pre></div></div>
 
-<p>By defining this association, we can easily preload these recent memberships when we load the teams:</p>
+<p>By having this as an association instead of regular methods, we can easily preload these recent memberships when we load the teams:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">teams</span> <span class="o">=</span> <span class="no">Team</span><span class="p">.</span><span class="nf">preload</span><span class="p">(</span><span class="ss">recent_memberships: :user</span><span class="p">)</span>
 </code></pre></div></div>
 
-<h1 id="step-3-define-scope-to-preload-avatars-for-the-users">Step 3: Define scope to preload avatars for the users</h1>
+<h2 id="step-3-load-the-most-recent-memberships">Step 3: Load the most recent memberships</h2>
 
-<p>Assuming that the <code class="language-plaintext highlighter-rouge">User</code> model has an <code class="language-plaintext highlighter-rouge">avatar</code> association via <code class="language-plaintext highlighter-rouge">has_one_attached</code>, we can define a scope to preload the
-avatars:</p>
+<p>This is a bit tricky as we need to define a scope that will load the last n memberships for each team. Assuming we are using PostgreSQL, we can use two approaches:</p>
+
+<ol>
+  <li>Using a lateral join (<em>personally less readable to me</em>)</li>
+  <li>Using window ranking functions with partition over.</li>
+</ol>
+
+<h3 id="using-lateral-join">Using Lateral Join</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">recent</span><span class="p">(</span><span class="ss">limit: </span><span class="mi">5</span><span class="p">)</span>
+  <span class="n">recent_memberships</span> <span class="o">=</span> <span class="no">Team</span>
+    <span class="p">.</span><span class="nf">joins</span><span class="p">(</span><span class="no">Team</span><span class="p">.</span><span class="nf">sanitize_sql_array</span><span class="p">([</span><span class="o">&lt;&lt;~</span><span class="no">SQL</span><span class="p">.</span><span class="nf">squish</span><span class="p">,</span> <span class="p">{</span> <span class="ss">limit: </span><span class="p">}]))</span><span class="sh">
+      JOIN LATERAL (
+        SELECT * FROM memberships
+        WHERE team_id = teams.id
+        ORDER BY created_at ASC LIMIT :limit
+      ) AS selected_memberships ON TRUE
+</span><span class="no">    SQL</span>
+    <span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="s1">'selected_memberships.*'</span><span class="p">)</span>
+
+  <span class="n">from</span><span class="p">(</span><span class="n">recent_memberships</span><span class="p">,</span> <span class="s1">'memberships'</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Here we’re joining memberships with teams (by using a lateral join, each team is joined with subquery results to load :limit recent memberships).</p>
+
+<h3 id="using-window-ranking-functions">Using Window Ranking Functions</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ranked_memberships</span> <span class="o">=</span> <span class="nb">select</span><span class="p">(</span><span class="s1">'memberships.*, dense_rank() OVER (PARTITION BY team_id ORDER BY created_at DESC) AS rank'</span><span class="p">)</span>
+  <span class="p">.</span><span class="nf">from</span><span class="p">(</span><span class="n">ranked_memberships</span><span class="p">,</span> <span class="s1">'memberships'</span><span class="p">).</span><span class="nf">where</span><span class="p">(</span><span class="ss">rank: </span><span class="o">..</span><span class="n">limit</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Here we are “splitting” memberships by <code class="language-plaintext highlighter-rouge">team_id</code>, and within each group, we rank them based on the condition (<code class="language-plaintext highlighter-rouge">ORDER BY created_at DESC</code>). Then we specify a condition for ranking (basically our <code class="language-plaintext highlighter-rouge">limit</code> argument).</p>
+
+<h2 id="step-4-preload-avatars-for-the-users">Step 4: Preload avatars for the users</h2>
+
+<p>Assuming that the User model has an avatar association via has_one_attached, we can define a scope to preload the avatars:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scope</span> <span class="ss">:with_avatars</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">includes</span><span class="p">(</span><span class="ss">avatar_attachment: </span><span class="p">{</span> <span class="ss">blob: </span><span class="p">{</span> <span class="ss">variant_records: </span><span class="p">{</span> <span class="ss">image_attachment: :blob</span> <span class="p">}</span> <span class="p">}</span> <span class="p">})</span> <span class="p">}</span>
 </code></pre></div></div>
 
-<h1 id="step-4-combine-everything-together">Step 4: Combine everything together</h1>
+<h2 id="step-5-combine-everything-together">Step 5: Combine everything together</h2>
 
-<p>Now we can combine everything together and take the advantage of the <code class="language-plaintext highlighter-rouge">ActiveRecord::Associations::Preloader</code> to specify additional scopes for the preloaded associations:</p>
+<p>Now we can combine everything together and take advantage of the ActiveRecord::Associations::Preloader to specify additional scopes for the preloaded associations:</p>
 
 <div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scope</span> <span class="o">=</span> <span class="no">Team</span><span class="p">.</span><span class="nf">with_memberships_count</span>
 <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Associations</span><span class="o">::</span><span class="no">Preloader</span>
@@ -276,6 +310,10 @@ avatars:</p>
       &copy; 2025 Lucas Mendelowski
     </p>
     <div class="flex items-center pt-5 gap-5 sm:pt-0">
+      
+        <a href="https://bsky.app/profile/lucas.mendelowski.com" target="_blank" rel="nofollow noopener noreferrer" target="_blank" aria-label="bluesky">
+          <i class="text-4xl text-primary hover:text-secondary transition-colors bx bxl-bluesky"></i>
+        </a>
       
         <a href="https://github.com/lcmen" target="_blank" rel="nofollow noopener noreferrer" target="_blank" aria-label="github">
           <i class="text-4xl text-primary hover:text-secondary transition-colors bx bxl-github"></i>
