@@ -9,7 +9,7 @@ tags:
 
 For a long period of time, concurrency in Ruby was purely based on threads. While Fibers have existed since Ruby 1.9, Ruby 3.0 introduced a powerful Fiber Scheduler interface that unlocks their full potential for concurrent I/O. Yes, I'm aware we are on Ruby 4 now but not everyone has had a chance to understand the benefits of Fibers.
 
-This post is an introduction to fibers and their advantages over thread-based concurrency. However, before we dive into the differences, let's understand why we need concurrency in the first place.
+This post is an introduction to fibers and explains the difference between thread-based concurrency. However, before we dive into the differences, let's understand why we need concurrency in the first place.
 
 # The Problem: I/O is slow and blocking by default
 
@@ -45,7 +45,7 @@ However, that introduces another problem - if data is not ready, what do you do?
 
 ## IO.select - efficient waiting
 
-This is where `IO.select` comes in. It's a system call that says "here are some I/O objects—put me to sleep until at least one of them is ready."
+This is where `IO.select` comes in. It's a system call that says "here are some I/O objects - put me to sleep until at least one of them is ready."
 
 ```ruby
 # Give it arrays of I/O objects to watch
@@ -64,7 +64,7 @@ end
 
 The OS efficiently sleeps your process and wakes it only when there's actual data. No CPU spinning.
 
-*Note: readable means data has arrived in the receive buffer, writeable means send buffer has space to accept more data*
+*Note: readable means data has arrived in the receive buffer, writable means send buffer has space to accept more data*
 
 Even though `IO.select` is built-in and works on all platforms, it's slower on a large number of I/Os, so depending on the OS you might want to use `epoll`, `kqueue` or `io_uring`:
 
@@ -101,6 +101,8 @@ Step 1
 Step 2
 Step 3
 ```
+
+**Note on Fiber Schedulers**: Ruby doesn't include a built-in fiber scheduler, so blocking operations like `sleep` or `socket.read` won't automatically yield to other fibers. For production use, you'll need a scheduler like the [async](https://github.com/socketry/async) gem by [Samuel Williams](https://github.com/ioquatix), which provides a complete implementation with timeouts, cancellation, and many other features. Later in this article, we'll build a minimal educational scheduler to understand how they work.
 
 ## Fibers for non-blocking I/O without thread overhead and mutexes
 
@@ -159,9 +161,9 @@ end
 threads.each(&:join)
 ```
 
-**Memory**. Each thread allocates its own stack by default, typically around 1MB on 64-bit systems. A thousand threads means ~1GB of memory just for stacks. Fibers are much lighter—they start with much smaller stacks (typically 4KB) and grow as needed, usually staying well under 128KB. While not as dramatic as sometimes claimed, this still means you can have significantly more fibers than threads in the same memory footprint.
+**Memory**. Each thread allocates its own stack by default, typically around 1MB on 64-bit systems. A thousand threads means ~1GB of memory just for stacks. Fibers are much lighter - [benchmarks show](https://bugs.ruby-lang.org/issues/17263#note-8) (values are in RSS - Resident Set Size in KB, the actual physical memory used; divide by number of fibers to get per-fiber cost) each fiber consumes roughly ~13KB of physical memory, meaning a thousand fibers use only ~13MB.
 
-**No mutexes needed**. The OS can switch between threads at any point—even in the middle of counter += 1. This means two threads can corrupt shared data:
+**No mutexes needed**. The OS can switch between threads at any point - even in the middle of counter += 1. This means two threads can corrupt shared data:
 
 ```ruby
 counter = 0
@@ -183,30 +185,52 @@ threads = 100.times.map do
 end
 ```
 
-Fibers don't have this problem. A fiber only yields at points you control—at I/O boundaries. Between those points, your code runs without interruption. No surprises, no mutexes needed.
+Fibers don't have this problem. A fiber only yields at points you control - at I/O boundaries. Between those points, your code runs without interruption. No surprises, no mutexes needed.
 
-**Predictable scheduling**. The OS decides when to switch threads. You decide when to switch fibers (at I/O points). This makes fiber-based code easier to reason about.
+## Fibers vs Threads
 
-**The tradeoff**: fibers are cooperative. If one fiber does heavy CPU work without yielding, it blocks all other fibers. Threads don't have this problem since the OS preempts them.
+So now you may ask, should I rewrite my code to use Fibers instead of Threads everywhere? No, here is when and why:
 
-## Quick Comparison
+If your application spends most of its time waiting for network responses, database queries, or file operations (basically I/O-based workflows) fibers excel. They are more memory efficient, and eliminate race conditions (since they yield at I/O checkpoints) without sacrificing concurrency. The lower memory footprint of fibers becomes significant when you need thousands of concurrent operations.
 
-| Aspect | Threads | Fibers |
-|--------|---------|--------|
-| Concurrency type | Preemptive | Cooperative |
-| Memory (stack) | 1MB stack | 4KB stack |
-| Race conditions | Yes, need mutexes | No, yields only at I/O |
-| CPU-heavy work | Automatically preempted | Blocks all fibers |
+However, you need to make sure that your Ruby code (including gems you are using) are fiber-aware. Libraries with blocking C extensions or those that don't integrate with the Fiber Scheduler will block the entire process.
+
+Also, because fibers use cooperative scheduling, a single fiber doing heavy computation can completely block all other fibers:
+
+```ruby
+Fiber.schedule { sleep(1); puts "Blocked!" }
+Fiber.schedule { 1_000_000_000.times { } } # Monopolizes CPU
+
+Fiber.scheduler.run
+# First fiber won't wake up until computation finishes!
+```
+
+Threads don't have this problem because they are automatically preempted by the OS, ensuring fair CPU time distribution across all threads. Also, if your application alternates between computation and I/O, threads usually provide better overall responsiveness.
+
+### What About M:N Threading?
+
+Ruby 3.3 introduced M:N threading (enabled via `RUBY_MN_THREADS=1`), which maps M Ruby threads onto N OS threads (default 8, configurable via `RUBY_MAX_CPU`). This is an interesting middle ground  -  you get preemptive scheduling (so no single thread can monopolize the CPU) without requiring a dedicated OS thread per Ruby thread. Technically, M:1 (many Ruby threads on a single OS thread) is the closest to fibers  -  both run concurrently on one OS thread, but M:1 threads are still preemptively scheduled by the VM. In either case, you still need mutexes for shared state and libraries don't need any special compatibility, unlike fibers.
+
+However, M:N threading is still experimental and disabled by default on the main Ractor due to C-extension compatibility concerns (particularly around native thread-local storage). It remains opt-in even in Ruby 4.0.
+
+### Quick Comparison
+
+| Aspect | Threads (1:1) | M:N Threads | Fibers |
+|--------|---------------|-------------|--------|
+| Concurrency type | Preemptive | Preemptive | Cooperative |
+| Memory | 1MB per thread | 1MB per thread | ~13KB per fiber |
+| Switching | OS decides | OS + VM decide | You decide (at I/O points) |
+| Race conditions | Yes, need mutexes | Yes, need mutexes | No, yields only at I/O |
+| CPU-heavy work | Automatically preempted | Automatically preempted | Blocks all fibers |
+| Library compatibility | All gems work | All gems work | Gems must be fiber-aware |
 
 # Fibers scheduler - elephant in the room
 
-Even though Ruby has built-in support for Fibers, it does not include a built-in scheduler. That means if you call `socket.read` or `sleep` inside a Fiber, it won't automatically yield control to other fibers. You need a scheduler for that — most notably, the famous `async` gem provides a production-ready scheduler implementation. When a scheduler for Fibers is configured, Ruby will use it to switch between Fibers during I/O operations.
+As mentioned earlier, Ruby doesn't include a built-in scheduler. When a scheduler is configured, Ruby uses it to automatically switch between fibers during I/O operations - calling the scheduler's methods like `io_wait` or `kernel_sleep` when blocking operations occur.
 
 ## Our own scheduler
 
-**Important**: For production use, you should use the battle-tested [async gem](https://github.com/socketry/async) which provides a complete Fiber Scheduler with support for timeouts, cancellation, and many other features. The scheduler we'll build below is purely educational to understand how schedulers work under the hood.
-
-To better understand the job of the scheduler, let's try to build the most basic scheduler.
+To better understand the job of the scheduler, let's build the most basic scheduler.
 
 The scheduler's job is to track which fibers are waiting for what (I/O readiness or time to pass), and resume them when their conditions are met. It maintains three collections: `@readable` for fibers waiting to read from sockets, `@writable` for fibers waiting to write, and `@waiting` for fibers that called `sleep()`.
 
@@ -300,7 +324,7 @@ As you can see, the scheduler is just a simple event-loop built on top of `IO.se
 
 The `io_wait` and `kernel_sleep` methods handle specific blocking scenarios (I/O and sleep). The `block` and `unblock` methods handle synchronization primitives like Mutex, ConditionVariable, and Queue.
 
-**Important detail**: `block(blocker, timeout)` does not receive a fiber as a parameter - it always pauses `Fiber.current` (the fiber calling it). But `unblock(blocker, fiber)` receives the waiting fiber as a parameter because to wake up.
+**Important detail**: `block(blocker, timeout)` does not receive a fiber as a parameter - it always pauses `Fiber.current` (the fiber calling it). But `unblock(blocker, fiber)` receives the waiting fiber as a parameter because it needs to specify which fiber to wake up.
 
 Example: Fiber 1 calls `mutex.lock` → triggers `block(mutex, nil)` → pauses Fiber 1. Later, Fiber 2 calls `mutex.unlock` → triggers `unblock(mutex, fiber1)` → resumes Fiber 1.
 
@@ -341,8 +365,6 @@ Both fibers sleep concurrently. Without the scheduler, this would take 1.5 secon
 
 # Conclusion
 
-Fibers provide a lightweight alternative to threads for handling concurrent I/O operations. They offer better memory efficiency, eliminate the need for mutexes in many scenarios, and give you predictable control over when context switches occur.
+Fibers provide a lightweight alternative to threads for handling concurrent I/O operations. Even though they offer better memory efficiency, eliminate the need for mutexes in many scenarios, and give you predictable control over when context switches occur, they are not the silver bullet, and tradeoffs need to be carefully evaluated.
 
 While our simple scheduler demonstrates the core concepts, remember to use a production-ready scheduler like the `async` gem for real applications.
-
-The key insight is that Fibers excel at I/O-bound concurrency. If your application spends most of its time waiting for network responses, database queries, or file operations, Fibers can dramatically improve efficiency without the complexity of thread synchronization.
