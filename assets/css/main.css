@@ -1,28 +1,147 @@
 ---
 ---
-@import "github.css";
+@import "tailwindcss";
+@import "./github.css";
 
-@tailwind base;
-@tailwind components;
+@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/forms";
+
+@theme {
+  --font-body: "Poppins", sans-serif;
+
+  --breakpoint-xs: 375px;
+
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-primary: #072344;
+  --color-secondary: #00aaa1;
+  --color-green: #007c85;
+  --color-green-light: #cceeec;
+  --color-green-dark: #065a68;
+  --color-blue: #0074d1;
+  --color-blue-light: #b3d6f1;
+  --color-blue-dark: #072344;
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-yellow: #f4d06f;
+  --color-yellow-lighter: #f6e8c6;
+  --color-yellow-light: #f8edd0;
+  --color-yellow-dark: #daa512;
+  --color-grey: #adb6c4;
+  --color-grey-lightest: #eff0f3;
+  --color-grey-lighter: #eceef1;
+  --color-grey-light: #ccd7e0;
+
+  --spacing-13: 3.25rem;
+  --spacing-15: 3.75rem;
+  --spacing-17: 4.25rem;
+  --spacing-18: 4.5rem;
+  --spacing-19: 4.75rem;
+  --spacing-76: 19rem;
+  --spacing-84: 21rem;
+  --spacing-88: 22rem;
+  --spacing-92: 23rem;
+  --spacing-100: 25rem;
+  --spacing-104: 26rem;
+  --spacing-108: 27rem;
+  --spacing-112: 28rem;
+  --spacing-116: 29rem;
+  --spacing-120: 30rem;
+  --spacing-124: 31rem;
+  --spacing-128: 32rem;
+  --spacing-132: 33rem;
+  --spacing-136: 34rem;
+  --spacing-140: 35rem;
+  --spacing-144: 36rem;
+  --spacing-148: 37rem;
+  --spacing-152: 38rem;
+  --spacing-156: 39rem;
+  --spacing-160: 40rem;
+  --spacing-164: 41rem;
+  --spacing-168: 42rem;
+  --spacing-172: 43rem;
+  --spacing-176: 44rem;
+  --spacing-180: 45rem;
+  --spacing-184: 46rem;
+  --spacing-188: 47rem;
+  --spacing-190: 48rem;
+  --spacing-194: 49rem;
+  --spacing-200: 50rem;
+  --spacing-204: 51rem;
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 1rem;
+  max-width: 600px;
+
+  @media (width >= theme(--breakpoint-sm)) {
+    max-width: 700px;
+  }
+
+  @media (width >= theme(--breakpoint-md)) {
+    max-width: 850px;
+  }
+}
 
 html {
   @apply font-body antialiased;
 }
 
-@tailwind utilities;
-
-.container {
-  max-width: 600px;
-
-  @screen sm {
-    max-width: 700px;
-  }
-
-  @screen md {
-    max-width: 850px;
-  }
-}
-
 .turbo-progress-bar {
   @apply bg-secondary;
+}
+
+.prose {
+  color: #072344;
+
+  a {
+    font-weight: 600;
+    color: #007c85;
+    text-decoration: underline;
+    transition: color 300ms;
+
+    &:hover {
+      color: #072344;
+    }
+  }
+
+  p, li {
+    font-weight: 300;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+  }
+
+  ul > li::before {
+    background-color: #072344;
+  }
+
+  blockquote {
+    border-left-width: 1rem;
+    border-color: #065a68;
+    border-radius: 3px;
+    background-color: #cceeec;
+    padding: 1rem 1.5rem;
+    color: #007c85;
+    font-style: normal;
+
+    p {
+      margin: 0;
+      font-weight: 400;
+    }
+  }
+
+  pre {
+    margin-top: 0;
+    margin-bottom: 1.25rem;
+    background-color: #fcfcfc;
+    color: inherit;
+  }
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 1.25rem;
+  }
 }

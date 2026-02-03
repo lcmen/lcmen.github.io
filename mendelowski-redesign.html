@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lucas Mendelowski — Redesign Concept</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --c-bg:             #faf8f5;
+      --c-surface:        #ffffff;
+      --c-surface-warm:   #f5f1ec;
+      --c-border:         #e2ddd6;
+      --c-border-subtle:  #eee9e3;
+      --c-text:           #2c2825;
+      --c-text-secondary: #5c5650;
+      --c-text-muted:     #9a928a;
+      --c-accent:         #c44d2b;
+      --c-accent-hover:   #a83d20;
+      --c-accent-ring:    rgba(196, 77, 43, 0.18);
+      --c-tag-ruby:    #b5432a;
+      --c-tag-rails:   #a83030;
+      --c-tag-js:      #9e7b18;
+      --c-tag-docker:  #1a6fac;
+      --c-tag-go:      #0090b5;
+      --c-tag-pg:      #2a5576;
+      --c-tag-linux:   #8a6d10;
+      --c-tag-unix:    #6e6860;
+      --c-tag-html:    #c04520;
+      --c-tag-elixir:  #5a3f8a;
+      --font-display: 'Newsreader', Georgia, serif;
+      --font-mono:    'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+      --shadow-card:  0 1px 3px rgba(44,40,37,0.04), 0 4px 16px rgba(44,40,37,0.03);
+      --shadow-hover: 0 2px 8px rgba(44,40,37,0.06), 0 8px 28px rgba(44,40,37,0.05);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      scroll-behavior: smooth;
+      background: var(--c-bg);
+      color: var(--c-text);
+      font-family: var(--font-mono);
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: var(--c-accent); color: #fff; }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.018;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+    .page-grid {
+      display: grid;
+      grid-template-columns: 1fr min(720px, 90vw) 1fr;
+    }
+    .page-grid > * { grid-column: 2; }
+    .line-accent { width: 28px; height: 2px; background: var(--c-accent); border-radius: 1px; }
+    nav a {
+      color: var(--c-text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 0.03em;
+      transition: color 0.2s;
+      position: relative;
+    }
+    nav a:hover { color: var(--c-text); }
+    nav a.active { color: var(--c-text); }
+    nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -5px; left: 0; right: 0;
+      height: 2px;
+      background: var(--c-accent);
+      border-radius: 1px;
+    }
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--c-text-muted);
+      font-weight: 500;
+    }
+    .tag {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid;
+    }
+    .tag-ruby    { color: var(--c-tag-ruby);   border-color: rgba(181,67,42,0.2);  background: rgba(181,67,42,0.06); }
+    .tag-rails   { color: var(--c-tag-rails);  border-color: rgba(168,48,48,0.2);  background: rgba(168,48,48,0.06); }
+    .tag-js      { color: var(--c-tag-js);     border-color: rgba(158,123,24,0.2); background: rgba(158,123,24,0.06); }
+    .tag-docker  { color: var(--c-tag-docker); border-color: rgba(26,111,172,0.2); background: rgba(26,111,172,0.06); }
+    .tag-go      { color: var(--c-tag-go);     border-color: rgba(0,144,181,0.2);  background: rgba(0,144,181,0.06); }
+    .tag-pg      { color: var(--c-tag-pg);     border-color: rgba(42,85,118,0.2);  background: rgba(42,85,118,0.06); }
+    .tag-linux   { color: var(--c-tag-linux);  border-color: rgba(138,109,16,0.2); background: rgba(138,109,16,0.06); }
+    .tag-unix    { color: var(--c-tag-unix);   border-color: rgba(110,104,96,0.2); background: rgba(110,104,96,0.06); }
+    .tag-html    { color: var(--c-tag-html);   border-color: rgba(192,69,32,0.2);  background: rgba(192,69,32,0.06); }
+    .tag-elixir  { color: var(--c-tag-elixir); border-color: rgba(90,63,138,0.2);  background: rgba(90,63,138,0.06); }
+    .post-card {
+      display: block;
+      text-decoration: none;
+      padding: 22px 26px;
+      border: 1px solid var(--c-border-subtle);
+      border-radius: 10px;
+      background: var(--c-surface);
+      box-shadow: var(--shadow-card);
+      transition: all 0.25s ease;
+    }
+    .post-card:hover {
+      border-color: var(--c-border);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    .post-card:hover .post-card-arrow { opacity: 1; transform: translateX(0); }
+    .post-card-arrow {
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: all 0.25s ease;
+      color: var(--c-accent);
+      font-size: 16px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 26px;
+      background: var(--c-accent);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .btn-primary:hover {
+      background: var(--c-accent-hover);
+      box-shadow: 0 4px 20px var(--c-accent-ring);
+    }
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      background: transparent;
+      color: var(--c-text-secondary);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid var(--c-border);
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover {
+      color: var(--c-text);
+      border-color: var(--c-text-muted);
+      background: var(--c-surface-warm);
+    }
+    .sep { height: 1px; background: var(--c-border-subtle); }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.65s ease both; }
+    .d1 { animation-delay: 0.06s; }
+    .d2 { animation-delay: 0.13s; }
+    .d3 { animation-delay: 0.20s; }
+    .d4 { animation-delay: 0.27s; }
+    .d5 { animation-delay: 0.34s; }
+    .d6 { animation-delay: 0.41s; }
+    .status-dot {
+      width: 7px; height: 7px;
+      background: #3ba55d;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 0 3px rgba(59,165,93,0.15);
+      animation: pulse-dot 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 3px rgba(59,165,93,0.15); }
+      50%      { opacity: 0.5; box-shadow: 0 0 0 5px rgba(59,165,93,0.08); }
+    }
+    .uses-card {
+      padding: 26px;
+      border: 1px solid var(--c-border-subtle);
+      border-radius: 10px;
+      background: var(--c-surface);
+      box-shadow: var(--shadow-card);
+      transition: all 0.25s;
+    }
+    .uses-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+    .hero-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      pointer-events: none;
+      z-index: -1;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--c-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 3px; }
+    .mobile-nav { display: none; }
+    @media (max-width: 640px) {
+      .desktop-nav { display: none !important; }
+      .mobile-nav  { display: flex !important; }
+      .hero-title  { font-size: 2.8rem !important; }
+      .story-grid  { grid-template-columns: 1fr !important; }
+      .uses-grid   { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+<div class="page-grid" style="min-height: 100vh;">
+
+  <!-- NAV -->
+  <header class="fade-up" style="padding: 28px 0 0; display: flex; justify-content: space-between; align-items: center;">
+    <a href="#" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <rect x="1" y="1" width="22" height="22" rx="6" fill="var(--c-accent)" fill-opacity="0.08" stroke="var(--c-accent)" stroke-width="1.4"/>
+        <text x="7" y="17" fill="var(--c-accent)" font-family="'Newsreader', serif" font-size="15" font-weight="500" font-style="italic">L</text>
+      </svg>
+      <span style="color: var(--c-text); font-size: 14px; font-weight: 500;">mendelowski</span>
+    </a>
+    <nav class="desktop-nav" style="display: flex; gap: 28px;">
+      <a href="#intro" class="active">Intro</a>
+      <a href="#blog">Blog</a>
+      <a href="#til">TIL</a>
+      <a href="#uses">Uses</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <nav class="mobile-nav" style="gap: 16px;">
+      <a href="#intro" class="active">Intro</a>
+      <a href="#blog">Blog</a>
+      <a href="#til">TIL</a>
+      <a href="#uses">Uses</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section id="intro" style="padding: 96px 0 80px; position: relative;">
+    <div class="hero-blob" style="width: 340px; height: 340px; background: rgba(196,77,43,0.06); top: -40px; right: -100px;"></div>
+    <div class="hero-blob" style="width: 240px; height: 240px; background: rgba(90,63,138,0.04); top: 100px; left: -140px;"></div>
+    <h1 class="fade-up d1 hero-title" style="font-family: var(--font-display); font-size: 4.2rem; font-weight: 400; line-height: 1.08; letter-spacing: -0.025em; color: var(--c-text); margin-bottom: 28px;">
+      Hi, I'm <span style="color: var(--c-accent); font-style: italic;">Lucas</span>
+    </h1>
+    <p class="fade-up d2" style="max-width: 500px; color: var(--c-text-secondary); font-size: 14px; line-height: 1.85; margin-bottom: 38px;">
+      Detail-oriented software engineer who thrives on new challenges.
+      I work with <span style="color: var(--c-text); font-weight: 500;">Ruby, Rails &amp; React</span> and I'm currently
+      exploring <span style="color: var(--c-text); font-weight: 500;">Elixir</span> and <span style="color: var(--c-text); font-weight: 500;">Go</span>.
+      From startups to established companies — worldwide.
+    </p>
+    <div class="fade-up d3" style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <a href="#contact" class="btn-primary">
+        Say hello
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#blog" class="btn-ghost">Read the blog</a>
+    </div>
+  </section>
+
+  <div class="sep fade-up d5"></div>
+
+  <!-- MY STORY -->
+  <section style="padding: 64px 0;">
+    <div class="fade-up d5" style="display: flex; align-items: center; gap: 12px; margin-bottom: 28px;">
+      <span class="line-accent"></span>
+      <span class="section-label">My Story</span>
+    </div>
+    <div class="fade-up d6 story-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 36px;">
+      <p style="color: var(--c-text-secondary); font-size: 13.5px; line-height: 1.9;">
+        I am a detail-oriented software engineer with a diverse background,
+        having worked with companies worldwide, from start-ups to medium-sized organizations.
+        I thrive on new challenges and eagerly embrace every opportunity to learn.
+      </p>
+      <p style="color: var(--c-text-secondary); font-size: 13.5px; line-height: 1.9;">
+        Whether it involves tackling a fresh project, mastering new tools, or assuming a different role —
+        I bring the same energy and curiosity. Currently leveraging Ruby, Rails, and React to deliver exceptional results.
+      </p>
+    </div>
+  </section>
+
+  <div class="sep"></div>
+
+  <!-- BLOG -->
+  <section id="blog" style="padding: 64px 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span class="line-accent"></span>
+        <span class="section-label">Blog Posts</span>
+      </div>
+      <a href="#" class="btn-ghost" style="font-size: 11px;">
+        All posts
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <a href="#" class="post-card">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div>
+            <div style="display: flex; gap: 6px; margin-bottom: 12px;"><span class="tag tag-ruby">Ruby</span></div>
+            <h3 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--c-text); font-weight: 400; margin-bottom: 6px;">Introduction to Fibers</h3>
+            <time style="font-size: 12px; color: var(--c-text-muted);">February 02, 2026</time>
+          </div>
+          <span class="post-card-arrow" style="margin-top: 28px;">→</span>
+        </div>
+      </a>
+      <a href="#" class="post-card">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div>
+            <div style="display: flex; gap: 6px; margin-bottom: 12px;"><span class="tag tag-js">JavaScript</span><span class="tag tag-html">HTML</span></div>
+            <h3 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--c-text); font-weight: 400; margin-bottom: 6px;">Hotwire vs HTMX vs Unpoly</h3>
+            <time style="font-size: 12px; color: var(--c-text-muted);">November 28, 2024</time>
+          </div>
+          <span class="post-card-arrow" style="margin-top: 28px;">→</span>
+        </div>
+      </a>
+      <a href="#" class="post-card">
+        <div style="display: flex; justify-content: space-between; align-items: start;">
+          <div>
+            <div style="display: flex; gap: 6px; margin-bottom: 12px;"><span class="tag tag-ruby">Ruby</span></div>
+            <h3 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--c-text); font-weight: 400; margin-bottom: 6px;">Pattern Matching with Ruby</h3>
+            <time style="font-size: 12px; color: var(--c-text-muted);">September 28, 2023</time>
+          </div>
+          <span class="post-card-arrow" style="margin-top: 28px;">→</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <div class="sep"></div>
+
+  <!-- TIL -->
+  <section id="til" style="padding: 64px 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <span class="line-accent"></span>
+        <span class="section-label">Today I Learned</span>
+      </div>
+      <a href="#" class="btn-ghost" style="font-size: 11px;">
+        All notes
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+    <div style="border: 1px solid var(--c-border-subtle); border-radius: 10px; overflow: hidden; background: var(--c-surface); box-shadow: var(--shadow-card);">
+      <a href="#" class="post-card" style="border: none; border-radius: 0; border-bottom: 1px solid var(--c-border-subtle); box-shadow: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <span class="tag tag-rails">Rails</span>
+            <span style="color: var(--c-text); font-size: 14px;">Recreating database with Rails 8</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <time style="font-size: 12px; color: var(--c-text-muted); white-space: nowrap;">Oct 2025</time>
+            <span class="post-card-arrow">→</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="post-card" style="border: none; border-radius: 0; border-bottom: 1px solid var(--c-border-subtle); box-shadow: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <span class="tag tag-pg">PostgreSQL</span>
+            <span style="color: var(--c-text); font-size: 14px;">Calculating median with PostgreSQL</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <time style="font-size: 12px; color: var(--c-text-muted); white-space: nowrap;">Feb 2025</time>
+            <span class="post-card-arrow">→</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="post-card" style="border: none; border-radius: 0; border-bottom: 1px solid var(--c-border-subtle); box-shadow: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <span class="tag tag-docker">Docker</span>
+            <span style="color: var(--c-text); font-size: 14px;">Using no-new-privileges in Docker</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <time style="font-size: 12px; color: var(--c-text-muted); white-space: nowrap;">Jul 2024</time>
+            <span class="post-card-arrow">→</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="post-card" style="border: none; border-radius: 0; border-bottom: 1px solid var(--c-border-subtle); box-shadow: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <span class="tag tag-unix">Unix</span>
+            <span style="color: var(--c-text); font-size: 14px;">Sending HTTP requests with telnet</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <time style="font-size: 12px; color: var(--c-text-muted); white-space: nowrap;">Apr 2024</time>
+            <span class="post-card-arrow">→</span>
+          </div>
+        </div>
+      </a>
+      <a href="#" class="post-card" style="border: none; border-radius: 0; box-shadow: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <span class="tag tag-linux">Linux</span>
+            <span style="color: var(--c-text); font-size: 14px;">Find process listening on a port</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <time style="font-size: 12px; color: var(--c-text-muted); white-space: nowrap;">Dec 2023</time>
+            <span class="post-card-arrow">→</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <div class="sep"></div>
+
+  <!-- USES -->
+  <section id="uses" style="padding: 64px 0;">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+      <span class="line-accent"></span>
+      <span class="section-label">My Setup</span>
+    </div>
+    <p style="color: var(--c-text-muted); font-size: 12px; margin-bottom: 32px;">
+      Inspired by <a href="https://uses.tech" style="color: var(--c-text-secondary); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--c-border);">uses.tech</a>
+    </p>
+    <div class="uses-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+      <div class="uses-card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+          <span style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--c-surface-warm); border-radius: 8px; font-size: 16px;">💻</span>
+          <span style="color: var(--c-text); font-size: 13px; font-weight: 500;">Laptop</span>
+        </div>
+        <p style="color: var(--c-text-secondary); font-size: 12.5px; line-height: 1.75;">2020 M1 MacBook Air. Portable and still powerful enough to not compromise on battery life.</p>
+      </div>
+      <div class="uses-card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+          <span style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--c-surface-warm); border-radius: 8px; font-size: 16px;">🖥</span>
+          <span style="color: var(--c-text); font-size: 13px; font-weight: 500;">Desktop</span>
+        </div>
+        <p style="color: var(--c-text-secondary); font-size: 12.5px; line-height: 1.75;">Self-built PC — AMD Ryzen 5 5600, 32GB RAM, RX 6600 in a compact Geeek A30 V2. Gaming &amp; tinkering.</p>
+      </div>
+      <div class="uses-card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+          <span style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--c-surface-warm); border-radius: 8px; font-size: 16px;">📱</span>
+          <span style="color: var(--c-text); font-size: 13px; font-weight: 500;">Phone</span>
+        </div>
+        <p style="color: var(--c-text-secondary); font-size: 12.5px; line-height: 1.75;">Google Pixel 7. Exceptional camera combined with pure Android experience.</p>
+      </div>
+      <div class="uses-card">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+          <span style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--c-surface-warm); border-radius: 8px; font-size: 16px;">⌨️</span>
+          <span style="color: var(--c-text); font-size: 13px; font-weight: 500;">Dev Tools</span>
+        </div>
+        <p style="color: var(--c-text-secondary); font-size: 12.5px; line-height: 1.75;">Evaluating AI-powered editors (VS Code / Cursor). Chrome for browsing, Bitwarden for passwords.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep"></div>
+
+  <!-- CONTACT -->
+  <section id="contact" style="padding: 64px 0; position: relative;">
+    <div class="hero-blob" style="width: 260px; height: 260px; background: rgba(196,77,43,0.05); bottom: -60px; right: -80px;"></div>
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 28px;">
+      <span class="line-accent"></span>
+      <span class="section-label">Get in Touch</span>
+    </div>
+    <h2 style="font-family: var(--font-display); font-size: 2.4rem; font-weight: 400; color: var(--c-text); line-height: 1.2; margin-bottom: 16px;">
+      Let's build something<br><span style="color: var(--c-accent); font-style: italic;">together.</span>
+    </h2>
+    <p style="color: var(--c-text-secondary); font-size: 13.5px; max-width: 420px; margin-bottom: 34px; line-height: 1.85;">
+      The best way to get in touch is to email me. Whether it's a project, collaboration, or just a hello — I'd love to hear from you.
+    </p>
+    <a href="mailto:hello@mendelowski.com" class="btn-primary">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Send an email
+    </a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="padding: 28px 0 44px; border-top: 1px solid var(--c-border-subtle);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <span style="font-size: 12px; color: var(--c-text-muted);">© 2026 Lucas Mendelowski</span>
+      <div style="display: flex; gap: 20px;">
+        <a href="#" style="color: var(--c-text-muted); font-size: 12px; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--c-text-secondary)'" onmouseout="this.style.color='var(--c-text-muted)'">GitHub</a>
+        <a href="#" style="color: var(--c-text-muted); font-size: 12px; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--c-text-secondary)'" onmouseout="this.style.color='var(--c-text-muted)'">LinkedIn</a>
+        <a href="#" style="color: var(--c-text-muted); font-size: 12px; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--c-text-secondary)'" onmouseout="this.style.color='var(--c-text-muted)'">RSS</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+<script>
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        window.scrollTo({ top: target.offsetTop - 40, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>

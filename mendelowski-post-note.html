@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pattern matching with Ruby — Lucas Mendelowski</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+  <style>
+    /* ── Shared design tokens ── */
+    :root {
+      --c-bg:             #faf8f5;
+      --c-surface:        #ffffff;
+      --c-surface-warm:   #f5f1ec;
+      --c-border:         #e2ddd6;
+      --c-border-subtle:  #eee9e3;
+      --c-text:           #2c2825;
+      --c-text-secondary: #5c5650;
+      --c-text-muted:     #9a928a;
+      --c-accent:         #c44d2b;
+      --c-accent-hover:   #a83d20;
+      --c-accent-ring:    rgba(196, 77, 43, 0.18);
+      --c-code-bg:        #1e1e1e;
+      --c-code-text:      #d4d4d4;
+      --c-code-comment:   #6a9955;
+      --c-code-keyword:   #c586c0;
+      --c-code-string:    #ce9178;
+      --c-code-symbol:    #4ec9b0;
+      --c-code-number:    #b5cea8;
+      --c-code-method:    #dcdcaa;
+      --c-tag-ruby:    #b5432a;
+      --c-tag-rails:   #a83030;
+      --c-tag-docker:  #1a6fac;
+      --font-display: 'Newsreader', Georgia, serif;
+      --font-mono:    'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+      --shadow-card:  0 1px 3px rgba(44,40,37,0.04), 0 4px 16px rgba(44,40,37,0.03);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      scroll-behavior: smooth;
+      background: var(--c-bg);
+      color: var(--c-text);
+      font-family: var(--font-mono);
+      font-size: 15px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    ::selection { background: var(--c-accent); color: #fff; }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.018;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ── Layout ── */
+    .page-grid {
+      display: grid;
+      grid-template-columns: 1fr min(680px, 90vw) 1fr;
+    }
+    .page-grid > * { grid-column: 2; }
+
+    /* ── Nav ── */
+    nav a {
+      color: var(--c-text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 0.03em;
+      transition: color 0.2s;
+      position: relative;
+    }
+    nav a:hover { color: var(--c-text); }
+    nav a.active { color: var(--c-text); }
+    nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -5px; left: 0; right: 0;
+      height: 2px;
+      background: var(--c-accent);
+      border-radius: 1px;
+    }
+
+    /* ── Tags ── */
+    .tag {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid;
+    }
+    .tag-ruby   { color: var(--c-tag-ruby);   border-color: rgba(181,67,42,0.2);  background: rgba(181,67,42,0.06); }
+    .tag-docker { color: var(--c-tag-docker); border-color: rgba(26,111,172,0.2); background: rgba(26,111,172,0.06); }
+
+    /* ── Back link ── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--c-text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--c-accent); }
+    .back-link svg { transition: transform 0.2s; }
+    .back-link:hover svg { transform: translateX(-3px); }
+
+    /* ── Article meta ── */
+    .article-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--c-text-muted);
+      flex-wrap: wrap;
+    }
+    .meta-dot {
+      width: 3px; height: 3px;
+      background: var(--c-border);
+      border-radius: 50%;
+    }
+
+    /* ── Article prose ── */
+    .prose h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--c-text);
+      margin: 48px 0 16px;
+      line-height: 1.3;
+    }
+    .prose h2:first-child { margin-top: 0; }
+    .prose p {
+      color: var(--c-text-secondary);
+      font-size: 14px;
+      line-height: 1.9;
+      margin-bottom: 20px;
+    }
+    .prose p code {
+      background: var(--c-surface-warm);
+      border: 1px solid var(--c-border-subtle);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      color: var(--c-accent);
+    }
+    .prose ul, .prose ol {
+      margin: 0 0 20px 24px;
+      color: var(--c-text-secondary);
+      font-size: 14px;
+      line-height: 1.9;
+    }
+    .prose li {
+      margin-bottom: 6px;
+    }
+    .prose li code {
+      background: var(--c-surface-warm);
+      border: 1px solid var(--c-border-subtle);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      color: var(--c-accent);
+    }
+    .prose strong {
+      color: var(--c-text);
+      font-weight: 500;
+    }
+    .prose a {
+      color: var(--c-accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(196,77,43,0.3);
+      transition: text-decoration-color 0.2s;
+    }
+    .prose a:hover {
+      text-decoration-color: var(--c-accent);
+    }
+    .prose blockquote {
+      border-left: 3px solid var(--c-accent);
+      padding: 12px 20px;
+      margin: 24px 0;
+      background: var(--c-surface-warm);
+      border-radius: 0 6px 6px 0;
+    }
+    .prose blockquote p {
+      margin-bottom: 0;
+      color: var(--c-text-secondary);
+      font-style: italic;
+    }
+    .prose hr {
+      border: none;
+      height: 1px;
+      background: var(--c-border-subtle);
+      margin: 40px 0;
+    }
+
+    /* ── Code blocks ── */
+    .code-block {
+      background: var(--c-code-bg);
+      border-radius: 8px;
+      margin: 24px 0;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+    .code-block-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .code-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .code-dot-red    { background: #ff5f57; }
+    .code-dot-yellow { background: #febc2e; }
+    .code-dot-green  { background: #28c840; }
+    .code-block pre {
+      padding: 18px 20px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--c-code-text);
+      tab-size: 2;
+    }
+    .code-block pre::-webkit-scrollbar { height: 4px; }
+    .code-block pre::-webkit-scrollbar-track { background: transparent; }
+    .code-block pre::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    .c-comment  { color: var(--c-code-comment); }
+    .c-keyword  { color: var(--c-code-keyword); }
+    .c-string   { color: var(--c-code-string); }
+    .c-symbol   { color: var(--c-code-symbol); }
+    .c-number   { color: var(--c-code-number); }
+    .c-method   { color: var(--c-code-method); }
+
+    /* ── Separator ── */
+    .sep { height: 1px; background: var(--c-border-subtle); }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.65s ease both; }
+    .d1 { animation-delay: 0.06s; }
+    .d2 { animation-delay: 0.13s; }
+    .d3 { animation-delay: 0.20s; }
+
+    /* ── Post footer nav ── */
+    .post-nav-card {
+      display: block;
+      text-decoration: none;
+      padding: 20px 24px;
+      border: 1px solid var(--c-border-subtle);
+      border-radius: 10px;
+      background: var(--c-surface);
+      box-shadow: var(--shadow-card);
+      transition: all 0.25s;
+    }
+    .post-nav-card:hover {
+      border-color: var(--c-border);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(44,40,37,0.06), 0 8px 28px rgba(44,40,37,0.05);
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--c-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 3px; }
+
+    .mobile-nav { display: none; }
+    @media (max-width: 640px) {
+      .desktop-nav { display: none !important; }
+      .mobile-nav  { display: flex !important; }
+      .article-title { font-size: 2rem !important; }
+      .post-nav-grid { grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ╔══════════════════════════════════════════════════════════════════╗
+     ║  PAGE 1: BLOG POST                                             ║
+     ╚══════════════════════════════════════════════════════════════════╝ -->
+
+<div class="page-grid" style="min-height: 100vh;">
+
+  <!-- NAV -->
+  <header class="fade-up" style="padding: 28px 0 0; display: flex; justify-content: space-between; align-items: center;">
+    <a href="#" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <rect x="1" y="1" width="22" height="22" rx="6" fill="var(--c-accent)" fill-opacity="0.08" stroke="var(--c-accent)" stroke-width="1.4"/>
+        <text x="7" y="17" fill="var(--c-accent)" font-family="'Newsreader', serif" font-size="15" font-weight="500" font-style="italic">L</text>
+      </svg>
+      <span style="color: var(--c-text); font-size: 14px; font-weight: 500;">mendelowski</span>
+    </a>
+    <nav class="desktop-nav" style="display: flex; gap: 28px;">
+      <a href="#">Intro</a>
+      <a href="#" class="active">Blog</a>
+      <a href="#">TIL</a>
+      <a href="#">Uses</a>
+      <a href="#">Contact</a>
+    </nav>
+    <nav class="mobile-nav" style="gap: 16px;">
+      <a href="#">Intro</a>
+      <a href="#" class="active">Blog</a>
+      <a href="#">TIL</a>
+      <a href="#">Uses</a>
+    </nav>
+  </header>
+
+
+  <!-- ARTICLE HEADER -->
+  <section style="padding: 56px 0 0;">
+    <a href="#" class="back-link fade-up" style="margin-bottom: 32px; display: inline-flex;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      All posts
+    </a>
+
+    <div class="fade-up d1" style="display: flex; gap: 6px; margin-bottom: 16px;">
+      <span class="tag tag-ruby">Ruby</span>
+    </div>
+
+    <h1 class="fade-up d1 article-title" style="font-family: var(--font-display); font-size: 2.6rem; font-weight: 400; line-height: 1.15; letter-spacing: -0.02em; color: var(--c-text); margin-bottom: 20px;">
+      Pattern Matching with Ruby
+    </h1>
+
+    <div class="fade-up d2 article-meta">
+      <time>September 28, 2023</time>
+      <span class="meta-dot"></span>
+      <span>3 min read</span>
+    </div>
+  </section>
+
+  <div class="sep fade-up d2" style="margin: 32px 0 0;"></div>
+
+
+  <!-- ARTICLE BODY -->
+  <article class="prose fade-up d3" style="padding: 40px 0 48px;">
+
+    <p>
+      With version 2.7, Ruby introduced a new language construct to work with data structures called pattern matching.
+    </p>
+    <p>
+      Pattern matching is a concept borrowed from functional programming. It enables developers to match values based on their structure (shape) and extract their elements at the same time. This powerful addition to the Ruby toolkit opens up new avenues for expressing complex logic in a more natural and elegant way.
+    </p>
+    <p>
+      In this article we will dive in and unlock the power of pattern matching to make your code easier to understand and reason about.
+    </p>
+
+    <h2>Matching against arrays or hashes</h2>
+
+    <p>
+      In Ruby, pattern matching can be done using the <code>in</code> or <code>=></code> (only available in Ruby >= 3) operators. For the time being, destructuring hashes is limited to those indexed by symbols (strings are not supported).
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-dot code-dot-red"></span>
+        <span class="code-dot code-dot-yellow"></span>
+        <span class="code-dot code-dot-green"></span>
+      </div>
+<pre><span class="c-comment"># assuming api.get returns hashes like:</span>
+<span class="c-comment">#   - { success: true|false, data: Object }</span>
+<span class="c-comment">#   - { error: true, message: String }</span>
+
+<span class="c-keyword">case</span> api.<span class="c-method">get</span>(<span class="c-string">'user'</span>, <span class="c-number">1</span>)
+<span class="c-keyword">in</span> { <span class="c-symbol">success:</span> <span class="c-keyword">true</span>, <span class="c-symbol">data:</span> user }
+  p user
+<span class="c-keyword">in</span> { <span class="c-symbol">success:</span> <span class="c-keyword">false</span>, <span class="c-symbol">message:</span> error }
+  p error
+<span class="c-keyword">end</span></pre>
+    </div>
+
+    <p>
+      In this example, we use a <code>case</code> statement with the <code>in</code> operator to match different patterns within the returned hash from <code>api.get</code> method.
+    </p>
+
+    <p>
+      If we only need to extract some value from the data (destructure), we can use <code>=></code> operator to avoid lengthy <code>case</code> / <code>in</code> construction.
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-dot code-dot-red"></span>
+        <span class="code-dot code-dot-yellow"></span>
+        <span class="code-dot code-dot-green"></span>
+      </div>
+<pre>result = { <span class="c-symbol">success:</span> <span class="c-keyword">true</span> }
+result => { <span class="c-symbol">success:</span> }
+success <span class="c-comment"># true</span></pre>
+    </div>
+
+    <h2>Guards in pattern matching</h2>
+
+    <p>
+      Matchers can also include an additional check that is verified after the value is matched:
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-dot code-dot-red"></span>
+        <span class="code-dot code-dot-yellow"></span>
+        <span class="code-dot code-dot-green"></span>
+      </div>
+<pre><span class="c-keyword">case</span> api.<span class="c-method">get</span>(<span class="c-string">'user'</span>, <span class="c-number">1</span>)
+<span class="c-keyword">in</span> { <span class="c-symbol">status:</span> status, <span class="c-symbol">data:</span> user } <span class="c-keyword">if</span> (<span class="c-number">200</span>...<span class="c-number">400</span>).<span class="c-method">include?</span>(status)
+  p user
+<span class="c-keyword">in</span> { <span class="c-symbol">error:</span> error }
+  p error
+<span class="c-keyword">end</span></pre>
+    </div>
+
+    <h2>Matching against classes</h2>
+
+    <p>
+      In Ruby, pattern matching isn't limited to arrays and hashes. You can also utilize it with your own classes. To make a class available for pattern matching operators, you need to implement two methods:
+    </p>
+
+    <ul>
+      <li><code>deconstruct</code> for array-style matching</li>
+      <li><code>deconstruct_key</code> for hash-style matching</li>
+    </ul>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-dot code-dot-red"></span>
+        <span class="code-dot code-dot-yellow"></span>
+        <span class="code-dot code-dot-green"></span>
+      </div>
+<pre>Response = <span class="c-symbol">Struct</span>.<span class="c-method">new</span>(<span class="c-symbol">:success</span>, <span class="c-symbol">:result</span>) <span class="c-keyword">do</span>
+  <span class="c-keyword">def</span> <span class="c-method">deconstruct</span>
+    [success, result]
+  <span class="c-keyword">end</span>
+
+  <span class="c-keyword">def</span> <span class="c-method">deconstruct_key</span>
+    { <span class="c-symbol">success:</span> success, <span class="c-symbol">result:</span> result }
+  <span class="c-keyword">end</span>
+<span class="c-keyword">end</span></pre>
+    </div>
+
+    <p>
+      Pattern matching in Ruby is a powerful tool that simplifies data extraction and enhances code clarity. It's a valuable addition to your Ruby toolkit, enabling you to write cleaner, and more expressive code.
+    </p>
+
+  </article>
+
+
+  <div class="sep"></div>
+
+  <!-- PREV / NEXT NAVIGATION -->
+  <section style="padding: 40px 0 64px;">
+    <div class="post-nav-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+      <a href="#" class="post-nav-card">
+        <span style="font-size: 11px; color: var(--c-text-muted); letter-spacing: 0.06em; text-transform: uppercase; display: block; margin-bottom: 8px;">← Previous</span>
+        <span style="font-family: var(--font-display); font-size: 1.1rem; color: var(--c-text); font-weight: 400;">Hotwire vs HTMX vs Unpoly</span>
+      </a>
+      <a href="#" class="post-nav-card" style="text-align: right;">
+        <span style="font-size: 11px; color: var(--c-text-muted); letter-spacing: 0.06em; text-transform: uppercase; display: block; margin-bottom: 8px;">Next →</span>
+        <span style="font-family: var(--font-display); font-size: 1.1rem; color: var(--c-text); font-weight: 400;">Introduction to Fibers</span>
+      </a>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer style="padding: 28px 0 44px; border-top: 1px solid var(--c-border-subtle);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <span style="font-size: 12px; color: var(--c-text-muted);">© 2026 Lucas Mendelowski</span>
+      <div style="display: flex; gap: 20px;">
+        <a href="#" style="color: var(--c-text-muted); font-size: 12px; text-decoration: none;">GitHub</a>
+        <a href="#" style="color: var(--c-text-muted); font-size: 12px; text-decoration: none;">LinkedIn</a>
+        <a href="#" style="color: var(--c-text-muted); font-size: 12px; text-decoration: none;">RSS</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+
+<!-- ╔══════════════════════════════════════════════════════════════════╗
+     ║  VISUAL BREAK BETWEEN PAGES                                     ║
+     ╚══════════════════════════════════════════════════════════════════╝ -->
+
+<div style="background: var(--c-border-subtle); padding: 60px 0; text-align: center; margin: 0;">
+  <span style="font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--c-text-muted); background: var(--c-bg); padding: 8px 20px; border-radius: 6px; border: 1px solid var(--c-border);">
+    ↓ &nbsp;TIL Note template below&nbsp; ↓
+  </span>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════════════════════════════╗
+     ║  PAGE 2: TIL NOTE (shorter, more compact)                       ║
+     ╚══════════════════════════════════════════════════════════════════╝ -->
+
+<div class="page-grid" style="min-height: 100vh;">
+
+  <!-- NAV -->
+  <header class="fade-up" style="padding: 28px 0 0; display: flex; justify-content: space-between; align-items: center;">
+    <a href="#" style="text-decoration: none; display: flex; align-items: center; gap: 10px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <rect x="1" y="1" width="22" height="22" rx="6" fill="var(--c-accent)" fill-opacity="0.08" stroke="var(--c-accent)" stroke-width="1.4"/>
+        <text x="7" y="17" fill="var(--c-accent)" font-family="'Newsreader', serif" font-size="15" font-weight="500" font-style="italic">L</text>
+      </svg>
+      <span style="color: var(--c-text); font-size: 14px; font-weight: 500;">mendelowski</span>
+    </a>
+    <nav class="desktop-nav" style="display: flex; gap: 28px;">
+      <a href="#">Intro</a>
+      <a href="#">Blog</a>
+      <a href="#" class="active">TIL</a>
+      <a href="#">Uses</a>
+      <a href="#">Contact</a>
+    </nav>
+    <nav class="mobile-nav" style="gap: 16px;">
+      <a href="#">Intro</a>
+      <a href="#">Blog</a>
+      <a href="#" class="active">TIL</a>
+      <a href="#">Uses</a>
+    </nav>
+  </header>
+
+
+  <!-- NOTE HEADER -->
+  <section style="padding: 56px 0 0;">
+    <a href="#" class="back-link fade-up" style="margin-bottom: 32px; display: inline-flex;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      All notes
+    </a>
+
+    <div class="fade-up d1" style="display: flex; gap: 6px; margin-bottom: 16px;">
+      <span class="tag tag-docker">Docker</span>
+    </div>
+
+    <h1 class="fade-up d1 article-title" style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 400; line-height: 1.15; letter-spacing: -0.015em; color: var(--c-text); margin-bottom: 20px;">
+      Using no-new-privileges in Docker
+    </h1>
+
+    <div class="fade-up d2 article-meta">
+      <time>July 11, 2024</time>
+      <span class="meta-dot"></span>
+      <span>1 min read</span>
+    </div>
+  </section>
+
+  <div class="sep fade-up d2" style="margin: 32px 0 0;"></div>
+
+
+  <!-- NOTE BODY -->
+  <article class="prose fade-up d3" style="padding: 40px 0 48px;">
+
+    <p>
+      The <code>no-new-privileges</code> security option in Docker prevents a container from gaining additional privileges after the initial execution.
+    </p>
+
+    <p>
+      This option is particularly useful in scenarios where you want to restrict the capabilities of a container to the bare minimum required for its operation.
+    </p>
+
+    <p>
+      Let's consider a simple example. Imagine you have a <code>Dockerfile</code> running the Ubuntu distribution with the following content:
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-dot code-dot-red"></span>
+        <span class="code-dot code-dot-yellow"></span>
+        <span class="code-dot code-dot-green"></span>
+        <span style="margin-left: 8px; font-size: 11px; color: rgba(255,255,255,0.35); font-family: var(--font-mono);">Dockerfile</span>
+      </div>
+<pre><span class="c-keyword">FROM</span> ubuntu:22.04
+
+<span class="c-keyword">RUN</span> apt update && apt -y install sudo
+
+<span class="c-keyword">RUN</span> useradd -m docker && \
+    <span class="c-method">echo</span> <span class="c-string">"docker:docker"</span> | chpasswd && \
+    adduser docker sudo
+
+<span class="c-keyword">USER</span> docker
+<span class="c-keyword">CMD</span> /bin/bash</pre>
+    </div>
+
+    <p>
+      If you build this image then run it, the container can execute commands with elevated privileges using <code>sudo</code>. This is especially problematic when running in privileged mode.
+    </p>
+
+    <p>
+      Let's run the container with <code>no-new-privileges</code> enabled:
+    </p>
+
+    <div class="code-block">
+      <div class="code-block-header">
+        <span class="code-dot code-dot-red"></span>
+        <span class="code-dot code-dot-yellow"></span>
+        <span class="code-dot code-dot-green"></span>
+        <span style="margin-left: 8px; font-size: 11px; color: rgba(255,255,255,0.35); font-family: var(--font-mono);">Terminal</span>
+      </div>
+<pre>$ docker run -it --security-opt no-new-privileges myimage
+
+docker@a0f8de47d2f2:/$ sudo su -
+<span class="c-string">sudo: The "no new privileges" flag is set, which
+prevents sudo from running as root.</span>
+<span class="c-string">sudo: If sudo is running in a container, you may
+need to adjust the container configuration to
+disable the flag.</span></pre>
+    </div>
+
+    <p>
+      Next time you run your Docker containers, consider using the <code>no-new-privileges</code> option to limit their privileges.
+    </p>
+
+  </article>
+
+
+  <div class="sep"></div>
+
+  <!-- PREV / NEXT NAVIGATION (TIL) -->
+  <section style="padding: 40px 0 64px;">
+    <div class="post-nav-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+      <a href="#" class="post-nav-card">
+        <span style="font-size: 11px; color: var(--c-text-muted); letter-spacing: 0.06em; text-transform: uppercase; display: block; margin-bottom: 8px;">← Previous</span>
+        <span style="font-family: var(--font-display); font-size: 1.05rem; color: var(--c-text); font-weight: 400;">Sending HTTP requests with telnet</span>
+      </a>
+      <a href="#" class="post-nav-card" style="text-align: right;">
+        <span style="font-size: 11px; color: var(--c-text-muted); letter-spacing: 0.06em; text-transform: uppercase; display: block; margin-bottom: 8px;">Next →</span>
+        <span style="font-family: var(--font-display); font-size: 1.05rem; color: var(--c-text); font-weight: 400;">Calculating median with PostgreSQL</span>
+      </a>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer style="padding: 28px 0 44px; border-top: 1px solid var(--c-border-subtle);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <span style="font-size: 12px; color: var(--c-text-muted);">© 2026 Lucas Mendelowski</span>
+      <div style="display: flex; gap: 20px;">
+        <a href="#" style="color: var(--c-text-muted); font-size: 12px; text-decoration: none;">GitHub</a>
+        <a href="#" style="color: var(--c-text-muted); font-size: 12px; text-decoration: none;">LinkedIn</a>
+        <a href="#" style="color: var(--c-text-muted); font-size: 12px; text-decoration: none;">RSS</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>
