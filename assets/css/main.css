@@ -2,11 +2,11 @@
 ---
 @import "tailwindcss";
 
-/* ── SailboatKit UI toolkit ── */
-@import "./sailboat.css";
-
 /* ── Code syntax highlighting ── */
 @import "./github.css";
+
+/* ── SailboatKit UI toolkit ── */
+@import "./sailboat.css";
 
 @theme {
   --color-primary-50:  #eff6ff;
