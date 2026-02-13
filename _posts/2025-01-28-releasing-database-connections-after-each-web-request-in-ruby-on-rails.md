@@ -4,7 +4,7 @@ title: "Releasing database connections after each web request in Ruby on Rails"
 description: "Learn how Ruby on Rails releases database connections back to the pool after each web request."
 date: 2025-01-28
 tags:
-  - Ruby on Rails
+  - Rails
 ---
 
 Recently, I came across some discussion mentioning that Ruby on Rails checks out a database connection from the connection pool on the first use within a web request and checks it in once the request is complete. While this wasn't new knowledge to me, I became curious about how it works under the hood.

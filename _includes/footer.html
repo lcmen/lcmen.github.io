@@ -1,13 +1,17 @@
-<footer id="footer" class="container mx-auto">
-  <div class="flex flex-col items-center justify-between border-t border-grey-lighter py-10 sm:flex-row sm:py-12">
-    <p class="font-body font-light text-primary">
+<footer class="container">
+  <hr class="border-t border-secondary-200" />
+  <div class="flex flex-col items-center justify-between gap-3 py-6 sm:flex-row">
+    <p class="text-sm text-secondary-400">
       &copy; {{ site.time | date: "%Y" }} {{ site.title }}
     </p>
-    <div class="flex items-center pt-5 gap-5 sm:pt-0">
+    <div class="flex items-center gap-4">
       {% for social in site.data.social %}
-        <a href="{{ social[1] }}" target="_blank" aria-label="{{ social[0] }}">
-          <i class="text-4xl text-primary hover:text-secondary transition-colors bx bxl-{{ social[0] }}"></i>
-        </a>
+        <a
+          href="{{ social[1] }}"
+          target="_blank"
+          class="text-sm text-secondary-500 transition-colors hover:text-primary-600"
+          aria-label="{{ social[0] }}"
+        >{{ social[0] | capitalize }}</a>
       {% endfor %}
     </div>
   </div>

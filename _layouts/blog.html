@@ -1,26 +1,30 @@
 ---
 layout: default
 ---
-<div class="py-16 lg:py-20">
-  <div>
-    <img srcset="/assets/img/icon-blog_2x.png 2x" src="/assets/img/icon-blog.png" alt="icon envelope" width="53" height="36" />
-  </div>
 
-  <h1 class="pt-5 font-body text-4xl font-semibold text-primary md:text-5xl lg:text-6xl">
-    Blog
-  </h1>
+<header class="page-header">
+  <h1 class="page-title">Blog</h1>
+  <p class="page-description">Articles, tutorials, snippets, and everything else.</p>
+</header>
 
-  <div class="pt-3 sm:w-3/4">
-    <p class="font-body text-xl font-light text-primary">
-      Articles, tutorials, snippets, rants, and everything else.
-    </p>
-  </div>
-
-  <div class="pt-8 lg:pt-12">
-    {% for post in paginator.posts %}
-      {% include post.html post=post first=forloop.first %}
-    {% endfor %}
-  </div>
-
-  {% include pagination.html paginator=paginator %}
+<div class="card divide-y divide-secondary-100 mb-8">
+  {% for post in paginator.posts %}
+    <a href="{{ post.url }}" class="flex items-center px-5 py-4 transition-colors hover:bg-secondary-50 group">
+      <div class="flex-1 min-w-0">
+        <div class="flex flex-wrap items-center gap-2 mb-1">
+          <span class="text-xs text-secondary-400">{{ post.date | date: "%b %d, %Y" }}</span>
+          {% for tag in post.tags %}
+            {% include tag.html tag=tag %}
+          {% endfor %}
+        </div>
+        <p class="text-sm font-semibold text-secondary-900 group-hover:text-primary-600 transition-colors leading-snug">{{ post.title }}</p>
+        {% if post.description %}
+          <p class="text-sm text-secondary-500 mt-1 line-clamp-2 hidden sm:block">{{ post.description }}</p>
+        {% endif %}
+      </div>
+      <svg class="w-5 h-5 text-secondary-300 shrink-0 ml-3 transition-all group-hover:text-primary-600 group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </a>
+  {% endfor %}
 </div>
+
+{% include pagination.html paginator=paginator %}

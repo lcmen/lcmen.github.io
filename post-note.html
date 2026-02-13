@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hotwire vs HTMX vs Unpoly - Lucas Mendelowski</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: #f8fafc; color: #1e293b; -webkit-font-smoothing: antialiased; }
+  a { text-decoration: none; color: inherit; }
+  code { font-family: 'JetBrains Mono', monospace; }
+
+  .container { max-width: 740px; margin: 0 auto; padding: 0 24px; }
+
+  /* === Nav === */
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
+  .nav-logo { font-weight: 700; font-size: 1rem; color: #111827; }
+  .nav-links { display: flex; gap: 24px; }
+  .nav-link { font-size: 0.875rem; font-weight: 500; color: #6b7280; transition: color 0.15s; }
+  .nav-link:hover { color: #2563eb; }
+
+  /* === Sailboat Divider === */
+  .divider { height: 1px; border: 0; background: #e5e7eb; margin: 0; }
+
+  /* === Sailboat Badges === */
+  .badge-blue { display: inline-flex; align-items: center; gap: 4px; border-radius: 9999px; background: #eff6ff; padding: 4px 12px; font-size: 0.75rem; font-weight: 600; color: #2563eb; }
+  .badge-orange { display: inline-flex; align-items: center; gap: 4px; border-radius: 9999px; background: #fff7ed; padding: 4px 12px; font-size: 0.75rem; font-weight: 600; color: #ea580c; }
+  .badge-green { display: inline-flex; align-items: center; gap: 4px; border-radius: 9999px; background: #f0fdf4; padding: 4px 12px; font-size: 0.75rem; font-weight: 600; color: #16a34a; }
+
+  /* === Sailboat Buttons === */
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 6px;
+    border-radius: 0.5rem; border: 1px solid #d1d5db; background: #fff;
+    padding: 8px 16px; font-size: 0.8rem; font-weight: 500; color: #374151;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.15s; cursor: pointer;
+  }
+  .btn-secondary:hover { background: #f3f4f6; }
+
+  /* === Article Header === */
+  .article-header { padding: 48px 0 32px; }
+  .article-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .article-title { font-size: 2rem; font-weight: 800; color: #111827; line-height: 1.25; letter-spacing: -0.025em; margin-bottom: 14px; }
+  .article-meta-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .article-meta { font-size: 0.85rem; color: #9ca3af; }
+  .article-back { display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 500; color: #6b7280; transition: color 0.15s; }
+  .article-back:hover { color: #2563eb; }
+
+  /* === Article Body — inside Sailboat Card === */
+  .card { background: #fff; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06); overflow: hidden; }
+  .article-body { padding: 32px 28px; }
+  .article-body p { font-size: 0.95rem; color: #374151; line-height: 1.85; margin-bottom: 20px; }
+  .article-body h2 { font-size: 1.25rem; font-weight: 700; color: #111827; margin: 32px 0 12px; }
+  .article-body h3 { font-size: 1.05rem; font-weight: 600; color: #111827; margin: 24px 0 10px; }
+  .article-body strong { font-weight: 600; color: #111827; }
+  .article-body a { color: #2563eb; font-weight: 500; }
+  .article-body a:hover { text-decoration: underline; }
+  .article-body ul, .article-body ol { margin: 0 0 20px 20px; font-size: 0.95rem; color: #374151; line-height: 1.85; }
+  .article-body li { margin-bottom: 6px; }
+  .article-body code {
+    background: #f3f4f6; padding: 2px 6px; border-radius: 4px;
+    font-size: 0.85rem; color: #dc2626;
+  }
+
+  /* Code block — Sailboat card-like */
+  .code-block {
+    background: #1e293b; border-radius: 0.5rem; padding: 20px;
+    margin: 0 0 20px; overflow-x: auto;
+  }
+  .code-block code {
+    background: none; padding: 0; border-radius: 0;
+    font-size: 0.8rem; color: #e2e8f0; line-height: 1.7; white-space: pre;
+  }
+  .code-label {
+    font-size: 0.7rem; font-weight: 600; color: #94a3b8; text-transform: uppercase;
+    letter-spacing: 0.05em; margin-bottom: 8px;
+  }
+
+  /* Sailboat-style notification/callout */
+  .callout {
+    border-radius: 0.75rem; border: 1px solid #bfdbfe; background: #eff6ff;
+    padding: 16px 20px; margin: 0 0 20px;
+    font-size: 0.875rem; color: #1e40af; line-height: 1.65;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .callout-icon { flex-shrink: 0; margin-top: 2px; }
+
+  /* === Related Posts — Sailboat Card list === */
+  .related-section { margin: 40px 0; }
+  .section-label { font-size: 0.75rem; font-weight: 600; color: #2563eb; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
+  .related-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; transition: background 0.15s; }
+  .related-item:not(:last-child) { border-bottom: 1px solid #f3f4f6; }
+  .related-item:hover { background: #f9fafb; }
+  .related-left { min-width: 0; }
+  .related-meta { display: flex; gap: 6px; margin-bottom: 4px; }
+  .related-title { font-size: 0.9rem; font-weight: 600; color: #111827; transition: color 0.15s; }
+  .related-item:hover .related-title { color: #2563eb; }
+  .related-arrow { color: #d1d5db; flex-shrink: 0; transition: color 0.15s, transform 0.15s; }
+  .related-item:hover .related-arrow { color: #2563eb; transform: translateX(3px); }
+
+  /* === Footer === */
+  .footer { padding: 24px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .footer-copy { font-size: 0.8rem; color: #9ca3af; }
+  .footer-links { display: flex; gap: 16px; }
+  .footer-link { font-size: 0.8rem; color: #6b7280; transition: color 0.15s; }
+  .footer-link:hover { color: #2563eb; }
+
+  /* Hero gradient */
+  .header-bg { position: absolute; top: 0; left: 0; right: 0; height: 300px; background: linear-gradient(180deg, #eff6ff 0%, #f8fafc 100%); z-index: -1; }
+
+  @media (max-width: 640px) {
+    .article-title { font-size: 1.5rem; }
+    .article-body { padding: 24px 20px; }
+    .nav-links { gap: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header-bg"></div>
+
+<div class="container">
+
+  <!-- Nav -->
+  <nav class="nav">
+    <a href="#" class="nav-logo">Lucas Mendelowski</a>
+    <div class="nav-links">
+      <a href="#" class="nav-link">Blog</a>
+      <a href="#" class="nav-link">TIL</a>
+      <a href="#" class="nav-link">Uses</a>
+      <a href="#" class="nav-link">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Article Header -->
+  <header class="article-header">
+    <h1 class="article-title">Hotwire vs HTMX vs Unpoly</h1>
+    <div class="article-meta-row">
+      <p class="article-meta">November 28, 2024 · 8 min read</p>
+    </div>
+  </header>
+
+  <!-- Article Body in Sailboat Card -->
+  <div class="card">
+    <article class="article-body">
+      <div class="article-tags">
+        <span class="badge-blue">JavaScript</span>
+        <span class="badge-blue">HTML</span>
+      </div>
+
+      <p>In this article, I compare three popular libraries for building interactive server-driven UIs — <strong>Hotwire</strong>, <strong>HTMX</strong>, and <strong>Unpoly</strong> — in the context of a simple TODO application I recently developed.</p>
+
+      <p>As an engineer with an interest in understanding the underlying mechanisms, I grew tired of reading various discussions on Reddit and HackerNews. I decided to roll up my sleeves and build a simple TODO application to compare these libraries based on typical web application requirements.</p>
+
+      <div class="callout">
+        <svg class="callout-icon" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
+        <span>The source code for the demo application is available on GitHub, and the application can be viewed in the browser. Please note it's hosted on a free tier, so it may take ~50 seconds to boot on the first request.</span>
+      </div>
+
+      <h2>Hotwire</h2>
+
+      <p><strong>Hotwire</strong> was developed by 37 Signals to replace Turbolinks with a more modern alternative providing additional capabilities. It comprises three elements:</p>
+
+      <ul>
+        <li><strong>Turbo</strong> — Drive, Frames, and Streams for updating page elements</li>
+        <li><strong>Stimulus</strong> — a modest JavaScript framework for behaviors</li>
+        <li><strong>Hotwire Native</strong> — a framework for building native mobile apps</li>
+      </ul>
+
+      <p>Turbo supports updating page elements in three ways. <strong>Turbo Drive</strong> replaces the body of the page without reloading assets. <strong>Turbo Frames</strong> scope navigation to specific page sections:</p>
+
+      <div class="code-block">
+        <div class="code-label">HTML</div>
+        <code>&lt;turbo-frame id="main"&gt;
+  &lt;a href="/"&gt;Home&lt;/a&gt;
+  &lt;a href="/blog"&gt;Blog&lt;/a&gt;
+  &lt;a href="/aboutme"&gt;About me&lt;/a&gt;
+&lt;/turbo-frame&gt;</code>
+      </div>
+
+      <p><strong>Turbo Stream</strong> updates a part of the page by performing a specified action (e.g., append, remove, replace). It can be delivered as a response to a regular request or via WebSocket broadcasts.</p>
+
+      <h2>HTMX</h2>
+
+      <p>HTMX provides a straightforward approach to enhancing HTML with minimal JavaScript, making it ideal for developers who prioritize simplicity and explicit behavior. It extends HTML with attributes that trigger AJAX requests and swap content directly.</p>
+
+      <h2>Unpoly</h2>
+
+      <p>Unpoly offers a more declarative approach with comprehensive conventions, minimizing the need for custom tweaks in common use cases.</p>
+
+      <p>If we could compare HTMX and Unpoly to backend frameworks, <strong>HTMX would be Django</strong> then <strong>Unpoly would be Ruby on Rails</strong>. Unpoly is also the only player from our trio that provides migration scripts to help with upgrading.</p>
+
+      <h2>Conclusion</h2>
+
+      <p>While each of these libraries enables the creation of responsive and interactive UIs, they do so in distinct ways:</p>
+
+      <ul>
+        <li><strong>Hotwire</strong> is particularly well-suited for seamless Rails integration, real-time WebSocket updates, or building mobile applications.</li>
+        <li><strong>HTMX</strong> is ideal for developers who prioritize simplicity and explicit behavior with minimal JavaScript.</li>
+        <li><strong>Unpoly</strong> with its comprehensive feature set and conventions, offers a more declarative approach for common use cases.</li>
+      </ul>
+
+    </article>
+  </div>
+
+  <!-- Related Posts -->
+  <div class="related-section">
+    <p class="section-label">More from the blog</p>
+    <div class="card">
+      <a href="#" class="related-item">
+        <div class="related-left">
+          <div class="related-meta">
+            <span class="badge-orange">Ruby</span>
+            <span class="badge-orange">Rails</span>
+          </div>
+          <div class="related-title">Rails cache – key versioning</div>
+        </div>
+        <svg class="related-arrow" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#" class="related-item">
+        <div class="related-left">
+          <div class="related-meta">
+            <span class="badge-orange">Ruby</span>
+          </div>
+          <div class="related-title">Pattern matching with Ruby</div>
+        </div>
+        <svg class="related-arrow" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- Footer -->
+  <footer class="footer">
+    <span class="footer-copy">© 2025 Lucas Mendelowski</span>
+    <div class="footer-links">
+      <a href="#" class="footer-link">GitHub</a>
+      <a href="#" class="footer-link">Twitter</a>
+      <a href="#" class="footer-link">Email</a>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

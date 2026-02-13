@@ -4,7 +4,7 @@ title: "Run gofmt on all files"
 description: "Run built-in go formatter on all project's files at once"
 date: 2019-01-07
 tags:
-  - golang
+  - go
 ---
 
 To run go formatter recursively on all project’s files simply use:
