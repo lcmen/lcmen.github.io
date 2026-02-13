@@ -92,6 +92,3 @@ DEPENDENCIES
   jekyll-postcss-v2
   kramdown (~> 2.4)
   rouge (~> 4.1)
-
-BUNDLED WITH
-   2.4.10
