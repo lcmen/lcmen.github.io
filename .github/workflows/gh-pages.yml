@@ -19,10 +19,10 @@ jobs:
           ruby-version: 3.2
           bundler-cache: true
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           cache: 'npm'
-          node-version-file: '.tool-versions'
+          node-version: '22'
       - run: npm install
       - name: Build site
         uses: limjh16/jekyll-action-ts@v2
