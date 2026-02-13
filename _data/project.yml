@@ -1,0 +1,12 @@
+# Featured project configuration
+name: Compartment
+subtitle: Go · macOS, Linux, Windows (WSL2)
+description:
+  Your assistant for spinning up local services for development without port conflicts.
+  Start multiple PostgreSQL versions, Redis instances, and more - all running simultaneously with DNS resolution.
+url: https://www.mendelowski.com/compartment/
+tags:
+  - Docker
+  - PostgreSQL
+  - DNS
+  - CLI

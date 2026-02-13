@@ -24,27 +24,23 @@
     <meta name="twitter:image" content="{{ site.url }}/assets/img/social.png" />
 
     <link rel="canonical" href="{{ site.url }}{{ page.url }}" />
-    <link rel="icon" type="image/png" href="/assets/img/favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
     <link crossorigin="crossorigin" href="https://fonts.gstatic.com" rel="preconnect" />
-    <link crossorigin="crossorigin" href="https://unpkg.com" rel="preconnect" />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" /></noscript>
-    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" /></noscript>
     <link rel="stylesheet" href="{{ "/assets/css/main.css" | relative_url }}" media="screen" data-turbo-track="reload">
     <script src="{{ "/assets/js/main.js" | relative_url }}" data-turbo-track="reload"></script>
     <script src="https://unpkg.com/@hotwired/turbo" defer></script>
   </head>
-  <body>
-    <div id="main">
-      {% include header.html %}
+  <body class="page-shell">
+    <div class="hero-bg"></div>
 
-      <div>
-        <div class="container mx-auto">
-          {{ content }}
-        </div>
-      </div>
+    {% include header.html %}
 
-      {% include footer.html %}
-    </div>
+    <main class="container flex-1">
+      {{ content }}
+    </main>
+
+    {% include footer.html %}
   </body>
 </html>

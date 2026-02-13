@@ -1,0 +1,32 @@
+ruby: danger
+elixir: purple
+javascript: warning
+typescript: primary
+html: warning
+css: primary
+go: info
+python: success
+sql: info
+
+rails: danger
+phoenix: purple
+react: info
+
+postgresql: primary
+mysql: info
+redis: danger
+sqlite: info
+
+docker: info
+git: danger
+linux: gray
+
+# Concepts
+dns: warning
+cli: gray
+api: success
+rest: success
+graphql: danger
+testing: success
+security: danger
+performance: warning

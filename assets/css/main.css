@@ -1,147 +1,200 @@
 ---
 ---
 @import "tailwindcss";
+
+/* ── SailboatKit UI toolkit ── */
+@import "./sailboat.css";
+
+/* ── Code syntax highlighting ── */
 @import "./github.css";
 
-@plugin "@tailwindcss/typography";
-@plugin "@tailwindcss/forms";
-
 @theme {
-  --font-body: "Poppins", sans-serif;
+  --color-primary-50:  #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
 
-  --breakpoint-xs: 375px;
+  --color-secondary-50:  #f8fafc;
+  --color-secondary-100: #f1f5f9;
+  --color-secondary-200: #e2e8f0;
+  --color-secondary-300: #cbd5e1;
+  --color-secondary-400: #94a3b8;
+  --color-secondary-500: #64748b;
+  --color-secondary-600: #475569;
+  --color-secondary-700: #334155;
+  --color-secondary-800: #1e293b;
+  --color-secondary-900: #0f172a;
 
-  --color-*: initial;
-  --color-transparent: transparent;
-  --color-primary: #072344;
-  --color-secondary: #00aaa1;
-  --color-green: #007c85;
-  --color-green-light: #cceeec;
-  --color-green-dark: #065a68;
-  --color-blue: #0074d1;
-  --color-blue-light: #b3d6f1;
-  --color-blue-dark: #072344;
-  --color-black: #000000;
-  --color-white: #ffffff;
-  --color-yellow: #f4d06f;
-  --color-yellow-lighter: #f6e8c6;
-  --color-yellow-light: #f8edd0;
-  --color-yellow-dark: #daa512;
-  --color-grey: #adb6c4;
-  --color-grey-lightest: #eff0f3;
-  --color-grey-lighter: #eceef1;
-  --color-grey-light: #ccd7e0;
-
-  --spacing-13: 3.25rem;
-  --spacing-15: 3.75rem;
-  --spacing-17: 4.25rem;
-  --spacing-18: 4.5rem;
-  --spacing-19: 4.75rem;
-  --spacing-76: 19rem;
-  --spacing-84: 21rem;
-  --spacing-88: 22rem;
-  --spacing-92: 23rem;
-  --spacing-100: 25rem;
-  --spacing-104: 26rem;
-  --spacing-108: 27rem;
-  --spacing-112: 28rem;
-  --spacing-116: 29rem;
-  --spacing-120: 30rem;
-  --spacing-124: 31rem;
-  --spacing-128: 32rem;
-  --spacing-132: 33rem;
-  --spacing-136: 34rem;
-  --spacing-140: 35rem;
-  --spacing-144: 36rem;
-  --spacing-148: 37rem;
-  --spacing-152: 38rem;
-  --spacing-156: 39rem;
-  --spacing-160: 40rem;
-  --spacing-164: 41rem;
-  --spacing-168: 42rem;
-  --spacing-172: 43rem;
-  --spacing-176: 44rem;
-  --spacing-180: 45rem;
-  --spacing-184: 46rem;
-  --spacing-188: 47rem;
-  --spacing-190: 48rem;
-  --spacing-194: 49rem;
-  --spacing-200: 50rem;
-  --spacing-204: 51rem;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 @utility container {
   margin-inline: auto;
   padding-inline: 1rem;
-  max-width: 600px;
-
-  @media (width >= theme(--breakpoint-sm)) {
-    max-width: 700px;
-  }
-
-  @media (width >= theme(--breakpoint-md)) {
-    max-width: 850px;
-  }
+  max-width: 740px;
 }
 
 html {
-  @apply font-body antialiased;
+  @apply font-sans antialiased;
+}
+
+body {
+  @apply bg-secondary-50 text-secondary-800;
+}
+
+strong {
+  @apply font-semibold;
+}
+
+small {
+  @apply text-sm;
 }
 
 .turbo-progress-bar {
-  @apply bg-secondary;
+  @apply bg-primary-500;
 }
 
+.hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 360px;
+  background: linear-gradient(180deg, var(--color-primary-50) 0%, var(--color-secondary-50) 100%);
+  z-index: -1;
+}
+
+/* ── Prose (article content) ── */
 .prose {
-  color: #072344;
+  @apply text-secondary-700;
 
   a {
-    font-weight: 600;
-    color: #007c85;
-    text-decoration: underline;
-    transition: color 300ms;
+    @apply font-semibold text-primary-600 underline transition-colors;
 
     &:hover {
-      color: #072344;
+      @apply text-primary-800;
     }
   }
 
-  p, li {
-    font-weight: 300;
+  p {
+    @apply leading-relaxed my-3;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
+  h1 {
+    @apply font-semibold text-secondary-900 text-2xl mt-6 mb-3;
   }
 
-  ul > li::before {
-    background-color: #072344;
+  h2 {
+    @apply font-semibold text-secondary-900 text-lg mt-6 mb-2;
+  }
+
+  h3 {
+    @apply font-semibold text-secondary-900 text-base mt-5 mb-2;
+  }
+
+  h4, h5, h6 {
+    @apply font-semibold text-secondary-900 mt-4 mb-2;
+  }
+
+  ul, ol {
+    @apply my-3 pl-6;
+  }
+
+  li {
+    @apply leading-relaxed my-1;
+  }
+
+  ul > li {
+    @apply list-disc;
+  }
+
+  ol > li {
+    @apply list-decimal;
+  }
+
+  ul > li::marker {
+    @apply text-secondary-400;
   }
 
   blockquote {
-    border-left-width: 1rem;
-    border-color: #065a68;
-    border-radius: 3px;
-    background-color: #cceeec;
-    padding: 1rem 1.5rem;
-    color: #007c85;
-    font-style: normal;
+    @apply border-l-4 border-primary-500 bg-primary-50 rounded-r-lg px-4 py-3 not-italic text-primary-800 my-4;
 
     p {
-      margin: 0;
-      font-weight: 400;
+      @apply m-0;
     }
   }
 
   pre {
-    margin-top: 0;
-    margin-bottom: 1.25rem;
-    background-color: #fcfcfc;
-    color: inherit;
+    @apply mt-0 mb-5 bg-primary-50 rounded-lg p-4 overflow-x-auto;
   }
 
-  h3 {
-    margin-top: 0;
-    margin-bottom: 1.25rem;
+  code {
+    @apply bg-secondary-100 text-red-600 px-1.5 py-0.5 rounded text-sm font-normal;
   }
+
+  pre code {
+    @apply bg-transparent text-secondary-800 p-0;
+  }
+}
+
+.badge {
+  @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold;
+}
+.badge-primary {
+  @apply bg-primary-50 text-primary-600;
+}
+.badge-success {
+  @apply bg-green-50 text-green-600;
+}
+.badge-warning {
+  @apply bg-yellow-50 text-yellow-600;
+}
+.badge-danger {
+  @apply bg-red-50 text-red-600;
+}
+.badge-info {
+  @apply bg-sky-50 text-sky-600;
+}
+.badge-gray {
+  @apply bg-gray-100 text-gray-600;
+}
+.badge-purple {
+  @apply bg-purple-50 text-purple-600;
+}
+.badge-orange {
+  @apply bg-orange-50 text-orange-600;
+}
+
+/* ── Page headers ── */
+.page-header {
+  @apply py-12 lg:py-14;
+}
+.page-title {
+  @apply text-2xl font-extrabold text-secondary-900 leading-tight tracking-tight mb-3 lg:text-3xl;
+}
+.page-description {
+  @apply text-base text-secondary-500 max-w-xl;
+}
+.page-meta {
+  @apply text-sm text-secondary-400;
+}
+
+/* ── Sections ── */
+.section {
+  @apply mb-10;
+}
+.section-header {
+  @apply flex items-center justify-between mb-4;
+}
+.section-label {
+  @apply text-xs font-semibold text-primary-600 uppercase tracking-widest;
+}
+.section-link {
+  @apply text-sm font-medium text-secondary-500 transition-colors hover:text-primary-600;
 }

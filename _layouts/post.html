@@ -1,25 +1,24 @@
 ---
 layout: default
 ---
-<article class="mb-8">
-  <p class="mb-4">
-    {% for tag in page.tags %}
-      {% include tag.html tag=tag %}
-    {% endfor %}
-  </p>
-  <h2 class="block font-body text-3xl font-semibold leading-tight text-primary transition-colors">
-    {{ page.title }}
-  </h2>
-  <div class="flex items-center gap-2 py-4 font-body text-grey">
-    <p class="font-light">
-      {{ page.date | date: "%B %d, %Y" }}
-    </p>
-    <span>//</span>
-    <p class="font-light">
-      {{ content | reading_time }} read
-    </p>
-  </div>
-  <content class="prose prose max-w-none">
-    {{ content }}
-  </content >
-</article>
+
+<header class="page-header">
+  <h1 class="page-title mb-4">{{ page.title }}</h1>
+  <p class="page-meta">{{ page.date | date: "%B %d, %Y" }} · {{ content | reading_time }} read</p>
+</header>
+
+<!-- Article Body -->
+<div class="card mb-10">
+  <article class="card-body">
+    {% if page.tags.size > 0 %}
+      <div class="flex flex-wrap gap-2 mb-6">
+        {% for tag in page.tags %}
+          {% include tag.html tag=tag %}
+        {% endfor %}
+      </div>
+    {% endif %}
+    <div class="prose prose-sm max-w-none sm:prose-base">
+      {{ content }}
+    </div>
+  </article>
+</div>

@@ -1,26 +1,24 @@
 ---
 layout: default
 ---
-<div class="py-16 lg:py-20">
-  <div>
-    <img srcset="/assets/img/icon-til_2x.png 2x" src="/assets/img/icon-til.png" alt="icon envelope" width="40" height="36" />
-  </div>
 
-  <h1 class="pt-5 font-body text-4xl font-semibold text-primary md:text-5xl lg:text-6xl">
-    Today I Learned
-  </h1>
+<header class="page-header">
+  <h1 class="page-title">Today I Learned</h1>
+  <p class="page-description">Short notes from all the things I learned across a variety of languages and technologies.</p>
+</header>
 
-  <div class="pt-3 sm:w-3/4">
-    <p class="font-body text-xl font-light text-primary">
-      Short notes from all the things I learned across a variety of languages and technologies.
-    </p>
-  </div>
-
-  <div class="pt-8 lg:pt-12">
-    {% for post in paginator.posts %}
-      {% include post.html post=post first=forloop.first %}
-    {% endfor %}
-  </div>
-
-  {% include pagination.html paginator=paginator %}
+<div class="card divide-y divide-secondary-100 mb-8">
+  {% for note in paginator.posts %}
+    <a href="{{ note.url }}" class="flex items-center justify-between gap-3 px-5 py-3 transition-colors hover:bg-secondary-50 group">
+      <div class="flex items-center gap-3 min-w-0">
+        <span class="text-sm font-medium text-secondary-700 truncate group-hover:text-primary-600 transition-colors">{{ note.title }}</span>
+        {% if note.tags.first %}
+          {% include tag.html tag=note.tags.first %}
+        {% endif %}
+      </div>
+      <span class="text-xs text-secondary-400 shrink-0 hidden sm:block">{{ note.date | date: "%b %d, %Y" }}</span>
+    </a>
+  {% endfor %}
 </div>
+
+{% include pagination.html paginator=paginator %}

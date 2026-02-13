@@ -1,78 +1,108 @@
 ---
 layout: default
-title: "Intro"
+title: "Home"
 ---
 
-<div class="border-b border-grey-lighter py-16 lg:py-20">
-  <div>
-    <img srcset="/assets/img/author_2x.png 2x" src="/assets/img/author.png" width="64" height="64" alt="author" />
-  </div>
-  <h1 class="pt-3 font-body text-4xl font-semibold text-primary md:text-5xl lg:text-6xl">
-    Hi, I’m {{ site.author }}
-  </h1>
-  <p class="pt-3 font-body text-xl font-light text-primary">
-    I thrive on new challenges and eagerly embrace every opportunity to learn.
-  </p>
-  <a
-    href="/contact"
-    class="mt-12 block bg-secondary px-10 py-4 text-center font-body text-xl font-semibold text-white transition-colors hover:bg-green sm:inline-block sm:text-left sm:text-2xl"
-    aria-label="Contact me"
-  >Say Hello!</a>
-</div>
-
-<div class="border-b border-grey-lighter py-16 lg:py-20">
-  <div class="flex items-center pb-6">
-    <img src="{{ "/assets/img/icon-story.png" | relative_url }}" width="21" height="29" alt="icon story" />
-    <h2 class="ml-3 font-body text-2xl font-semibold text-primary">My Story</h2>
-  </div>
-  <div>
-    <p class="font-body font-light text-primary">
-      I am a detail-oriented software engineer with a diverse background,
-      having worked with companies worldwide, from start-ups to medium-sized organizations.
-      <br />
-      <br />
-      I thrive on new challenges and eagerly embrace every opportunity to learn,
-      whether it involves tackling a fresh project, mastering new tools, or assuming a different role.
-      <br />
-      <br />
-      Currently, I leverage the power of Ruby, Rails, and React to deliver exceptional results.
-      Moreover, I am actively expanding my skill set by delving into the realms of Elixir and Go.
+<section class="flex flex-col-reverse gap-8 py-14 sm:flex-row sm:items-start sm:gap-10 lg:py-16">
+  <div class="flex-1">
+    <p class="mb-3">
+      <strong><small class="text-primary-600 tracking-wide">Software Engineer</small></strong>
     </p>
+    <h1 class="font-extrabold text-secondary-900 leading-tight tracking-tight mb-4 lg:text-4xl">
+      I'm Lucas, helping companies worldwide.
+    </h1>
+    <p class="text-base text-secondary-500 leading-relaxed mb-7 max-w-xl">
+      Detail-oriented engineer with a diverse background - from start-ups to medium-sized organizations.
+      I thrive on new challenges, whether it involves tackling a fresh project, leading teams, or assuming a different role.
+      Also a co-organizer of <a href="https://lu.ma/krug" target="_blank" class="text-primary-600 font-medium hover:text-primary-800 transition-colors">Kraków Ruby Users Group</a>.
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <a href="mailto:lucas@mendelowski.com" class="btn btn-primary">
+        Say Hello
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+      </a>
+      <a href="https://github.com/lcmen" target="_blank" class="btn btn-secondary">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
   </div>
-</div>
+  <img
+    srcset="/assets/img/author_2x.png 2x"
+    src="/assets/img/author.png"
+    alt="{{ site.author }}"
+    class="w-28 h-28 rounded-full object-cover shrink-0 shadow border-4 border-white sm:w-32 sm:h-32"
+  />
+</section>
 
-<div class="py-16 lg:py-20">
-  <div class="flex items-center pb-6">
-    <img src="{{ "/assets/img/icon-post.png" | relative_url }}" width="32" height="21" alt="icon story" />
-    <h2 class="ml-3 font-body text-2xl font-semibold text-primary">Latest Content</h2>
-  </div>
-  <div class="lg:flex">
-    <div class="lg:w-1/2 lg:mb-0 mb-6">
-      {% for post in site.posts limit:1 %}
-        {% include post.html post=post first=true %}
-        <a
-          href="/blog/"
-          class="mt-3 flex items-center font-body italic text-green transition-colors hover:text-secondary"
-          aria-label="All posts"
-        >
-          All posts
-          <img src="{{ "/assets/img/long-arrow-right.png" | relative_url }}" width="16" height="10" class="ml-3" alt="arrow right" />
-        </a>
-      {% endfor %}
-    </div>
-    <div class="lg:w-1/2">
-      {% assign notes = site.notes | sort: 'date' | reverse %}
-      {% for post in notes limit:1 %}
-        {% include post.html post=post first=true %}
-        <a
-          href="/til/"
-          class="mt-3 flex items-center font-body italic text-green transition-colors hover:text-secondary"
-          aria-label="All notes"
-        >
-          All notes
-          <img src="{{ "/assets/img/long-arrow-right.png" | relative_url }}" width="16" height="10" class="ml-3" alt="arrow right" />
-        </a>
-      {% endfor %}
+<section class="section">
+  <p class="section-label mb-4">Featured Projects</p>
+  <div class="card">
+    <div class="card-body">
+      <div class="flex items-center gap-4 mb-3">
+        <div class="w-11 h-11 rounded-xl bg-primary-500 flex items-center justify-center shrink-0">
+          <svg width="22" height="22" fill="none" stroke="#fff" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15A2.25 2.25 0 002.25 6.75v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
+        </div>
+        <div>
+          <a href="{{ site.data.project.url }}" target="_blank" class="text-base font-semibold text-secondary-900 hover:text-primary-600 transition-colors">
+            {{ site.data.project.name }}
+          </a>
+          <p class="text-sm text-secondary-400 mt-0.5">{{ site.data.project.subtitle }}</p>
+        </div>
+      </div>
+      <p class="text-sm text-secondary-500 leading-relaxed mb-4">{{ site.data.project.description }}</p>
+      <div class="flex flex-wrap gap-2">
+        {% for tag in site.data.project.tags %}
+          {% include tag.html tag=tag %}
+        {% endfor %}
+      </div>
     </div>
   </div>
-</div>
+</section>
+
+<section class="section">
+  <div class="section-header">
+    <p class="section-label">Blog</p>
+    <a href="/blog/" class="section-link">All posts &rarr;</a>
+  </div>
+  <div class="card divide-y divide-secondary-100">
+    {% for post in site.posts limit:3 %}
+      <a href="{{ post.url }}" class="flex items-center px-5 py-4 transition-colors hover:bg-secondary-50 group">
+        <div class="flex-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <span class="text-xs text-secondary-400">{{ post.date | date: "%b %d, %Y" }}</span>
+            {% for tag in post.tags %}
+              {% include tag.html tag=tag %}
+            {% endfor %}
+          </div>
+          <p class="text-sm font-semibold text-secondary-900 group-hover:text-primary-600 transition-colors leading-snug">{{ post.title }}</p>
+          {% if post.description %}
+            <p class="text-sm text-secondary-500 mt-1 line-clamp-1 hidden sm:block">{{ post.description }}</p>
+          {% endif %}
+        </div>
+        <svg class="w-5 h-5 text-secondary-300 shrink-0 ml-3 transition-all group-hover:text-primary-600 group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-header">
+    <p class="section-label">Today I Learned</p>
+    <a href="/til/" class="section-link">All notes &rarr;</a>
+  </div>
+  <div class="card divide-y divide-secondary-100">
+    {% assign notes = site.notes | sort: 'date' | reverse %}
+    {% for note in notes limit:5 %}
+      <a href="{{ note.url }}" class="flex items-center justify-between gap-3 px-5 py-3 transition-colors hover:bg-secondary-50 group">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="text-sm font-medium text-secondary-700 truncate group-hover:text-primary-600 transition-colors">{{ note.title }}</span>
+          {% if note.tags.first %}
+            {% include tag.html tag=note.tags.first %}
+          {% endif %}
+        </div>
+        <span class="text-xs text-secondary-400 shrink-0 hidden sm:block">{{ note.date | date: "%b %Y" }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
