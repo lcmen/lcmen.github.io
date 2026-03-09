@@ -1,0 +1,22 @@
+# Featured projects configuration
+- name: Compartment
+  subtitle: Go · macOS, Linux, Windows (WSL2)
+  description:
+    Your assistant for spinning up local services for development without port conflicts.
+    Start multiple PostgreSQL versions, Redis instances, and more - all running simultaneously with DNS resolution.
+  url: https://www.mendelowski.com/compartment/
+  tags:
+    - Docker
+    - PostgreSQL
+    - DNS
+    - CLI
+
+- name: go-pty
+  subtitle: Go · macOS, Linux
+  description:
+    A process manager that runs commands from a Procfile, each in its own pseudoterminal (PTY).
+    Every process gets a real terminal, so you can attach to any running process and use interactive debuggers and REPLs directly.
+  url: https://www.mendelowski.com/go-pty/
+  tags:
+    - Go
+    - CLI
