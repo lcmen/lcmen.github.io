@@ -8,10 +8,6 @@ autopages:
   enabled: false
 
 collections:
-  notes:
-    output: true
-    permalink: /til/:year/:month/:title
-    sort_by: date
   posts:
     output: true
     permalink: /blog/:year/:month/:title
