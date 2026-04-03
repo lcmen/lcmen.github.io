@@ -48,7 +48,7 @@ module ReadingTimeFilter
 
   def strip_pre_tags(input)
     empty = ''.freeze
-    input.to_s.gsub(/<pre(?:(?!<\/pre).|\s)*<\/pre>/mi, empty)
+    input.to_s.gsub(/<pre(?:(?!<\/pre).)*?<\/pre>/mi, empty)
   end
 end
 
