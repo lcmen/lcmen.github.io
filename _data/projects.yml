@@ -7,7 +7,6 @@
   url: https://www.mendelowski.com/compartment/
   tags:
     - Docker
-    - PostgreSQL
     - DNS
     - CLI
 
@@ -20,3 +19,13 @@
   tags:
     - Go
     - CLI
+
+- name: Bootboat
+  subtitle: CSS · Web
+  description:
+    A semantic CSS component library based on Sailboat UI, built with Tailwind CSS v4.
+    Provides Bootstrap-like class names using Tailwind's @utility directive.
+  url: https://www.mendelowski.com/bootboat/
+  tags:
+    - CSS
+    - Tailwind
