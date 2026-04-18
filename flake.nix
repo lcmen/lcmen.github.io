@@ -1,5 +1,5 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
   outputs = { nixpkgs, ... }:
     let
@@ -12,7 +12,7 @@
         in {
           default = pkgs.mkShell {
             packages = [
-              pkgs.nodejs_22
+              pkgs.nodejs_24
               pkgs.ruby_3_4
               pkgs.cacert
               pkgs.libxcrypt

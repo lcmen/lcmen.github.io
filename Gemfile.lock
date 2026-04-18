@@ -90,6 +90,7 @@ GEM
 PLATFORMS
   arm64-darwin-21
   arm64-darwin-23
+  arm64-darwin-25
   x86_64-linux
 
 DEPENDENCIES
@@ -98,3 +99,6 @@ DEPENDENCIES
   jekyll-postcss-v2!
   kramdown (~> 2.4)
   rouge (~> 4.1)
+
+BUNDLED WITH
+   4.0.10
